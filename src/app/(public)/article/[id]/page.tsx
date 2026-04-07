@@ -68,10 +68,40 @@ export default async function ArticleDetailPage({
 
       {/* Content */}
       <Card variant="low">
-        <div className="prose prose-invert prose-sm max-w-none text-on-surface/90 leading-relaxed">
+        <div className="prose prose-invert prose-sm max-w-none text-on-surface/90 leading-relaxed whitespace-pre-line">
           {article.content}
         </div>
       </Card>
+
+      {/* Reference URL */}
+      {article.url && (
+        <Card variant="low">
+          <div className="flex items-start gap-3">
+            <span className="material-symbols-outlined text-primary text-lg mt-0.5">link</span>
+            <div className="min-w-0">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1">
+                Reference Source
+              </h3>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:text-secondary transition-colors break-all"
+              >
+                {article.url}
+              </a>
+            </div>
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex-shrink-0 text-on-surface-variant hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">open_in_new</span>
+            </a>
+          </div>
+        </Card>
+      )}
 
       {/* Translate button (show when no translation exists) */}
       {!translation && (

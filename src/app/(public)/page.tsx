@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroBriefing } from "@/components/feed/HeroBriefing";
-import { NetworkHealth } from "@/components/feed/NetworkHealth";
 import { ArticleGrid } from "@/components/feed/ArticleGrid";
+import { FetchRSSButton } from "@/components/feed/FetchRSSButton";
 import type { ArticleWithTranslation } from "@/lib/types/database";
 
 export const revalidate = 300;
@@ -28,16 +28,33 @@ export default async function IntelligenceFeedPage() {
     (a) => a.severity === "critical"
   ).length;
 
+  const highCount = articles.filter(
+    (a) => a.severity === "high"
+  ).length;
+
+  const translatedCount = articles.filter(
+    (a) => a.translations !== null
+  ).length;
+
   return (
     <>
-      {/* Hero section */}
-      <div className="grid grid-cols-12 gap-6 mb-8">
+      {/* Hero section - full width */}
+      <div className="mb-8">
         <HeroBriefing
-          relevance={94}
           activeThreats={articles.length}
           criticalAlerts={criticalCount}
+          highAlerts={highCount}
+          translatedCount={translatedCount}
+          latestArticles={articles.slice(0, 5)}
         />
-        <NetworkHealth />
+      </div>
+
+      {/* RSS Fetch + Article grid header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-headline text-lg font-bold text-on-surface">
+          Threat Intelligence Feed
+        </h2>
+        <FetchRSSButton />
       </div>
 
       {/* Article grid */}

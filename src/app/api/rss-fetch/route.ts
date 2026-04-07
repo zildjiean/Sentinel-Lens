@@ -1,0 +1,314 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+const SEVERITY_KEYWORDS: Record<string, string[]> = {
+  critical: ["breach", "zero-day", "zero day", "0-day", "ransomware", "rce", "remote code execution"],
+  high: ["vulnerability", "exploit", "malware", "trojan", "backdoor", "apt", "cve-"],
+  medium: ["patch", "update", "advisory", "security update", "disclosure"],
+};
+
+function classifySeverity(text: string): string {
+  const lower = text.toLowerCase();
+  for (const [severity, keywords] of Object.entries(SEVERITY_KEYWORDS)) {
+    if (keywords.some((kw) => lower.includes(kw))) {
+      return severity;
+    }
+  }
+  return "low";
+}
+
+function extractTag(xml: string, tag: string): string {
+  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
+  const match = xml.match(regex);
+  if (!match) return "";
+  const cdata = match[1].match(/<!\[CDATA\[([\s\S]*?)\]\]>/);
+  return (cdata ? cdata[1] : match[1]).trim();
+}
+
+function extractMediaUrl(itemXml: string): string {
+  const mediaMatch = itemXml.match(/<media:content[^>]+url="([^"]+)"/i);
+  if (mediaMatch) return mediaMatch[1];
+  const enclosureMatch = itemXml.match(/<enclosure[^>]+url="([^"]+)"/i);
+  if (enclosureMatch) return enclosureMatch[1];
+  const imgMatch = itemXml.match(/<img[^>]+src="([^"]+)"/i);
+  if (imgMatch) return imgMatch[1];
+  return "";
+}
+
+interface FeedItem {
+  title: string;
+  content: string;
+  link: string;
+  author: string;
+  pubDate: string;
+  imageUrl: string;
+}
+
+function parseRSSItems(xml: string): FeedItem[] {
+  const items: FeedItem[] = [];
+  const itemRegex = /<(?:item|entry)[\s>]([\s\S]*?)<\/(?:item|entry)>/gi;
+  let match;
+
+  while ((match = itemRegex.exec(xml)) !== null) {
+    const block = match[1];
+    const title = extractTag(block, "title");
+    const content =
+      extractTag(block, "content:encoded") ||
+      extractTag(block, "content") ||
+      extractTag(block, "description") ||
+      extractTag(block, "summary");
+
+    let link = extractTag(block, "link");
+    if (!link) {
+      const linkHref = block.match(/<link[^>]+href="([^"]+)"/i);
+      if (linkHref) link = linkHref[1];
+    }
+
+    const author =
+      extractTag(block, "author") ||
+      extractTag(block, "dc:creator") ||
+      "";
+
+    const pubDate =
+      extractTag(block, "pubDate") ||
+      extractTag(block, "published") ||
+      extractTag(block, "updated") ||
+      "";
+
+    const imageUrl = extractMediaUrl(block);
+
+    if (title && link) {
+      items.push({ title, content, link, author, pubDate, imageUrl });
+    }
+  }
+
+  return items;
+}
+
+// Strip HTML tags and clean up text
+function stripHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Fetch and extract article content from URL
+async function scrapeArticleContent(url: string): Promise<string> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; SentinelLens/1.0; +https://sentinel-lens.vercel.app)",
+        "Accept": "text/html,application/xhtml+xml",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) return "";
+
+    const html = await res.text();
+
+    // Try to extract article content using common patterns
+    let articleContent = "";
+
+    // Try <article> tag first
+    const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+    if (articleMatch) {
+      articleContent = articleMatch[1];
+    }
+
+    // Try common content selectors
+    if (!articleContent) {
+      const contentPatterns = [
+        /<div[^>]*class="[^"]*article[_-]?(?:content|body|text)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+        /<div[^>]*class="[^"]*(?:post|entry)[_-]?(?:content|body|text)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+        /<div[^>]*class="[^"]*content[_-]?(?:area|main|body)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+        /<div[^>]*id="[^"]*(?:article|content|post)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+        /<main[^>]*>([\s\S]*?)<\/main>/i,
+      ];
+
+      for (const pattern of contentPatterns) {
+        const contentMatch = html.match(pattern);
+        if (contentMatch && contentMatch[1].length > 200) {
+          articleContent = contentMatch[1];
+          break;
+        }
+      }
+    }
+
+    // Try extracting all <p> tags from body as fallback
+    if (!articleContent || stripHtml(articleContent).length < 200) {
+      const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+      if (bodyMatch) {
+        const paragraphs: string[] = [];
+        const pRegex = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+        let pMatch;
+        while ((pMatch = pRegex.exec(bodyMatch[1])) !== null) {
+          const text = stripHtml(pMatch[1]);
+          if (text.length > 40) {
+            paragraphs.push(text);
+          }
+        }
+        if (paragraphs.length > 0) {
+          articleContent = paragraphs.join("\n\n");
+          return articleContent.substring(0, 8000);
+        }
+      }
+    }
+
+    const cleaned = stripHtml(articleContent);
+    return cleaned.substring(0, 8000);
+  } catch {
+    return "";
+  }
+}
+
+export async function POST(request: Request) {
+  const supabase = await createClient();
+
+  // Auth check
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || profile.role === "viewer") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Optional: specific source_id, otherwise fetch all active
+  const body = await request.json().catch(() => ({}));
+  const sourceId = body.source_id;
+
+  // Get active RSS sources
+  let query = supabase.from("rss_sources").select("*").eq("is_active", true);
+  if (sourceId) {
+    query = query.eq("id", sourceId);
+  }
+
+  const { data: sources, error: srcErr } = await query;
+
+  if (srcErr) {
+    return NextResponse.json({ error: srcErr.message }, { status: 500 });
+  }
+
+  if (!sources || sources.length === 0) {
+    return NextResponse.json({ message: "No active RSS sources" });
+  }
+
+  let totalNew = 0;
+  let totalSkipped = 0;
+  const errors: string[] = [];
+
+  for (const source of sources) {
+    try {
+      // Fetch RSS feed
+      const feedRes = await fetch(source.url, {
+        headers: { "User-Agent": "SentinelLens/1.0" },
+      });
+
+      if (!feedRes.ok) {
+        errors.push(`${source.name}: HTTP ${feedRes.status}`);
+        continue;
+      }
+
+      const xml = await feedRes.text();
+      const items = parseRSSItems(xml);
+
+      // Get existing URLs for dedup
+      const urls = items.map((i) => i.link).filter(Boolean);
+      const { data: existing } = await supabase
+        .from("articles")
+        .select("url")
+        .in("url", urls);
+
+      const existingUrls = new Set((existing ?? []).map((a: { url: string }) => a.url));
+
+      // Filter new articles
+      const newItems = items.filter((item) => item.link && !existingUrls.has(item.link));
+
+      // Process each new article (scrape full content)
+      for (const item of newItems.slice(0, 10)) {
+        try {
+          // Get RSS content first
+          let rssContent = stripHtml(item.content);
+
+          // If RSS content is short (< 500 chars), try scraping full content from URL
+          if (rssContent.length < 500 && item.link) {
+            const scraped = await scrapeArticleContent(item.link);
+            if (scraped.length > rssContent.length) {
+              rssContent = scraped;
+            }
+          }
+
+          const combinedText = `${item.title} ${rssContent}`;
+          const severity = classifySeverity(combinedText);
+          const excerpt = rssContent.substring(0, 500);
+
+          const { error: insErr } = await supabase.from("articles").insert({
+            source_id: source.id,
+            title: item.title,
+            content: rssContent,
+            excerpt,
+            url: item.link,
+            image_url: item.imageUrl || null,
+            author: item.author || null,
+            severity,
+            status: "new",
+            published_at: item.pubDate
+              ? new Date(item.pubDate).toISOString()
+              : new Date().toISOString(),
+          });
+
+          if (insErr) {
+            errors.push(`${source.name}: Insert error - ${insErr.message}`);
+          } else {
+            totalNew++;
+          }
+        } catch (itemErr) {
+          errors.push(
+            `${source.name}/${item.title}: ${itemErr instanceof Error ? itemErr.message : String(itemErr)}`
+          );
+        }
+      }
+
+      totalSkipped += items.length - newItems.length;
+
+      // Update last_fetched_at
+      await supabase
+        .from("rss_sources")
+        .update({ last_fetched_at: new Date().toISOString() })
+        .eq("id", source.id);
+    } catch (sourceErr) {
+      errors.push(
+        `${source.name}: ${sourceErr instanceof Error ? sourceErr.message : String(sourceErr)}`
+      );
+    }
+  }
+
+  return NextResponse.json({
+    success: true,
+    new_articles: totalNew,
+    skipped_duplicates: totalSkipped,
+    sources_processed: sources.length,
+    errors: errors.length > 0 ? errors : undefined,
+  });
+}
