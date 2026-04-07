@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroBriefing } from "@/components/feed/HeroBriefing";
-import { ArticleGrid } from "@/components/feed/ArticleGrid";
-import { FetchRSSButton } from "@/components/feed/FetchRSSButton";
+import { FilteredFeed } from "@/components/feed/FilteredFeed";
 import type { ArticleWithTranslation } from "@/lib/types/database";
 
 export const revalidate = 300;
@@ -49,16 +48,8 @@ export default async function IntelligenceFeedPage() {
         />
       </div>
 
-      {/* RSS Fetch + Article grid header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-headline text-lg font-bold text-on-surface">
-          Threat Intelligence Feed
-        </h2>
-        <FetchRSSButton />
-      </div>
-
-      {/* Article grid */}
-      <ArticleGrid articles={articles} />
+      {/* Filtered article feed */}
+      <FilteredFeed articles={articles} />
 
       {/* FAB */}
       <button className="fixed bottom-8 right-8 bg-secondary text-[#263046] w-14 h-14 rounded-full flex items-center justify-center shadow-[0_4px_24px_rgba(74,225,131,0.3)] hover:scale-105 transition-transform duration-200 z-50">

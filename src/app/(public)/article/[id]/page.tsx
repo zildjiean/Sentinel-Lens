@@ -73,6 +73,19 @@ export default async function ArticleDetailPage({
         </div>
       </Card>
 
+      {/* Download PDF */}
+      <div className="flex gap-2">
+        <a
+          href={`/api/article-pdf?id=${article.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-[#263046] text-sm font-medium hover:opacity-90 transition-opacity"
+        >
+          <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </a>
+      </div>
+
       {/* Reference URL */}
       {article.url && (
         <Card variant="low">

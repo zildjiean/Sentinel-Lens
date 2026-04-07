@@ -41,7 +41,25 @@ export default function ReportArchivePage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this report? This action cannot be undone.")) {
+      return;
+    }
+
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+
+    // Delete report_articles junction first
+    await supabase.from("report_articles").delete().eq("report_id", id);
+
+    // Delete the report
+    const { error } = await supabase.from("reports").delete().eq("id", id);
+
+    if (error) {
+      alert("Failed to delete report: " + error.message);
+      return;
+    }
+
     setReports((prev) => prev.filter((r) => r.id !== id));
   };
 
