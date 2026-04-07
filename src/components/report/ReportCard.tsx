@@ -1,0 +1,75 @@
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { StatusIndicator } from "@/components/ui/StatusIndicator";
+import type { Report } from "@/lib/types/database";
+
+interface ReportCardProps {
+  report: Report;
+  onDelete?: (id: string) => void;
+}
+
+const statusMap: Record<string, "secure" | "warning" | "critical" | "neutral"> = {
+  published: "secure",
+  reviewed: "secure",
+  generated: "warning",
+  draft: "neutral",
+};
+
+export function ReportCard({ report, onDelete }: ReportCardProps) {
+  return (
+    <Card variant="low" className="flex flex-col md:flex-row gap-4">
+      {/* Left: image placeholder */}
+      <div className="md:w-48 h-32 md:h-auto rounded-lg bg-gradient-to-br from-surface-container-high to-surface-container-lowest relative overflow-hidden flex-shrink-0 flex items-center justify-center">
+        <span className="material-symbols-outlined text-4xl text-on-surface-variant/30">
+          description
+        </span>
+        <div className="absolute bottom-2 left-2">
+          <StatusIndicator
+            status={statusMap[report.status] ?? "neutral"}
+            label={report.status}
+          />
+        </div>
+      </div>
+
+      {/* Middle: info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-headline text-lg font-bold text-on-surface mb-1 truncate">
+          {report.title}
+        </h3>
+        <p className="text-xs text-on-surface-variant mb-2">
+          Classification:{" "}
+          <span className="text-tertiary font-semibold uppercase">
+            {report.classification}
+          </span>
+        </p>
+        <div className="flex items-center gap-2 mb-2">
+          <Badge severity={report.severity} />
+          <Badge label={report.report_type} />
+        </div>
+        <p className="text-xs text-on-surface-variant">
+          Created: {new Date(report.created_at).toLocaleDateString()}
+        </p>
+      </div>
+
+      {/* Right: actions */}
+      <div className="flex md:flex-col gap-2 flex-shrink-0">
+        <Button variant="ghost" size="sm">
+          <span className="material-symbols-outlined text-lg">download</span>
+        </Button>
+        <Button variant="ghost" size="sm">
+          <span className="material-symbols-outlined text-lg">share</span>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete?.(report.id)}
+        >
+          <span className="material-symbols-outlined text-lg text-error">
+            delete
+          </span>
+        </Button>
+      </div>
+    </Card>
+  );
+}
