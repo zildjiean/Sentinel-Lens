@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 
 const navItems = [
@@ -14,6 +15,14 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container-low flex flex-col z-50">
@@ -47,7 +56,10 @@ export function Sidebar() {
             <span className="material-symbols-outlined text-sm">help_outline</span>
             Support
           </Link>
-          <button className="flex items-center gap-2 px-3 py-1.5 text-xs text-on-surface-variant hover:text-on-surface transition-colors text-left">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs text-on-surface-variant hover:text-on-surface transition-colors text-left"
+          >
             <span className="material-symbols-outlined text-sm">logout</span>
             Sign Out
           </button>
