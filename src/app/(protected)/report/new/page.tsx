@@ -67,31 +67,38 @@ export default function NewReportPage() {
     });
   };
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleGenerate = async () => {
     if (!title || selectedIds.size === 0) return;
     setGenerating(true);
+    setError(null);
 
     try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      const { data, error } = await supabase.functions.invoke(
-        "report-gen",
-        {
-          body: {
-            title,
-            report_type: reportType,
-            classification,
-            article_ids: Array.from(selectedIds),
-          },
-        }
-      );
+      const response = await fetch("/api/report-gen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          report_type: reportType,
+          classification,
+          article_ids: Array.from(selectedIds),
+        }),
+      });
 
-      if (error) throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Report generation failed");
+        return;
+      }
+
       if (data?.report_id) {
         router.push(`/report/${data.report_id}`);
       }
     } catch (err) {
       console.error("Report generation failed:", err);
+      setError("Network error. Please try again.");
     } finally {
       setGenerating(false);
     }
@@ -177,6 +184,13 @@ export default function NewReportPage() {
           </p>
         )}
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="bg-error/10 border border-error/30 rounded-lg p-3 text-error text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Generate button */}
       <div className="flex justify-end">
