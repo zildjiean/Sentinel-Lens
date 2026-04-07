@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Archive | Sentinel Lens</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-secondary-fixed": "#00210c",
+            "on-primary": "#263046",
+            "outline": "#8e9196",
+            "on-tertiary-container": "#ca6904",
+            "secondary": "#4ae183",
+            "background": "#131317",
+            "on-primary-fixed-variant": "#3c475d",
+            "surface-dim": "#131317",
+            "tertiary-fixed": "#ffdcc5",
+            "on-secondary": "#003919",
+            "on-error-container": "#ffdad6",
+            "on-primary-fixed": "#101b30",
+            "primary-container": "#0f1a2e",
+            "primary-fixed": "#d7e2ff",
+            "surface": "#131317",
+            "inverse-primary": "#545e76",
+            "tertiary": "#ffb783",
+            "surface-container-highest": "#353439",
+            "on-error": "#690005",
+            "surface-container-high": "#2a2a2e",
+            "surface-variant": "#353439",
+            "surface-container-lowest": "#0e0e12",
+            "on-primary-container": "#78839c",
+            "surface-container-low": "#1b1b1f",
+            "outline-variant": "#44474c",
+            "inverse-on-surface": "#303034",
+            "error": "#ffb4ab",
+            "secondary-fixed-dim": "#4ae183",
+            "on-surface": "#e4e1e7",
+            "surface-tint": "#bbc6e2",
+            "on-secondary-fixed-variant": "#005228",
+            "on-surface-variant": "#c4c6cc",
+            "error-container": "#93000a",
+            "secondary-fixed": "#6bfe9c",
+            "on-background": "#e4e1e7",
+            "tertiary-container": "#2e1300",
+            "primary-fixed-dim": "#bbc6e2",
+            "on-tertiary-fixed-variant": "#713700",
+            "primary": "#bbc6e2",
+            "surface-container": "#1f1f23",
+            "on-tertiary": "#4f2500",
+            "surface-bright": "#39393d",
+            "tertiary-fixed-dim": "#ffb783",
+            "on-secondary-container": "#00431f",
+            "on-tertiary-fixed": "#301400",
+            "secondary-container": "#06bb63",
+            "inverse-surface": "#e4e1e7"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #131317;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #353439;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#1b1b1f] dark:bg-slate-900 flex flex-col py-6 px-4 font-['Manrope'] text-sm tracking-wide z-50">
+<div class="mb-10 px-2">
+<h1 class="text-xl font-bold tracking-tighter text-[#bbc6e2]">Sentinel Lens</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-on-primary-container/60 mt-1">Cybersecurity Intelligence</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23]" href="#">
+<span class="material-symbols-outlined text-[20px]">rss_feed</span>
+        Intelligence Feed
+      </a>
+<a class="flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23]" href="#">
+<span class="material-symbols-outlined text-[20px]">g_translate</span>
+        Translation Lab
+      </a>
+<!-- Active State for Report Archive -->
+<a class="flex items-center gap-3 px-3 py-2.5 transition-all bg-[#2a2a2e] text-[#bbc6e2] font-semibold border-l-4 border-[#bbc6e2] opacity-90" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+        Report Archive
+      </a>
+<a class="flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23]" href="#">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+        Export Center
+      </a>
+<a class="flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23]" href="#">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+        Security Settings
+      </a>
+</nav>
+<div class="mt-auto pt-6 space-y-1">
+<button class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary text-on-primary font-bold rounded-lg mb-6 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+        New Analysis
+      </button>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-slate-200 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+        Support
+      </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-slate-200 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+        Sign Out
+      </a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-[#131317]/80 backdrop-blur-md flex justify-between items-center px-8 font-['Inter'] text-sm font-medium">
+<div class="flex items-center gap-8">
+<span class="hidden md:block text-lg font-extrabold text-[#bbc6e2]">Sentinel Translate</span>
+<nav class="flex gap-6">
+<a class="text-slate-400 hover:text-white transition-opacity" href="#">Global Feed</a>
+<a class="text-[#bbc6e2] border-b-2 border-[#bbc6e2] pb-1" href="#">My Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
+<input class="bg-surface-container-lowest border-none border-b-2 border-outline-variant/30 focus:border-primary focus:ring-0 text-body py-1.5 pl-10 pr-4 w-64 transition-all" placeholder="Search archive..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#bbc6e2] hover:text-white transition-opacity flex items-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-[#bbc6e2] hover:text-white transition-opacity flex items-center">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Analyst Avatar wearing professional attire in a dimly lit high-tech environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAbMtYPwK5riFvCkB1tM5_iOtwh-yyr5GN0Ghyf2ahRoCPH4D94Inqe-els7p3dbQAolSdyxrICs4QcwnahR4n2zGD9Eccc5vvHx0O_KH4jnWiGJfNV6w9cZozAP3_hGTv9mIl2FwK8cuYPR-1E1FOnNO0Y_5CLS3Adb3XQhPnlSBDI27f14nzw3GrGNjBhUjE0h5uG7MpItWz_8iFCgAcTG8Bjbnh59y9MQzSqTYyZxbajo4JxX-SCqRfBKHs8DryVWfsmmtXfz8"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-8 pb-12 min-h-screen">
+<!-- Hero Header / Summary -->
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+<div>
+<h2 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight">Report Archive</h2>
+<p class="text-on-surface-variant font-body mt-2">Manage and deliver validated cybersecurity intelligence exports.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low px-6 py-4 rounded-xl flex flex-col items-end">
+<span class="text-[10px] uppercase tracking-widest text-on-primary-container font-bold">Total Exports</span>
+<span class="text-2xl font-headline font-bold text-primary">1,284</span>
+</div>
+<div class="bg-surface-container-low px-6 py-4 rounded-xl flex flex-col items-end">
+<span class="text-[10px] uppercase tracking-widest text-secondary font-bold">Verified Delivery</span>
+<span class="text-2xl font-headline font-bold text-secondary">98.2%</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Bento -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+<div class="md:col-span-2 bg-surface-container p-6 rounded-xl">
+<label class="text-[10px] uppercase tracking-widest text-outline font-bold mb-3 block">Search by Client or Threat ID</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none border-b-2 border-outline-variant/30 focus:border-primary focus:ring-0 text-on-surface py-2 pr-10" placeholder="e.g. Aether Dynamics..." type="text"/>
+<span class="material-symbols-outlined absolute right-0 top-1/2 -translate-y-1/2 text-primary">search</span>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl">
+<label class="text-[10px] uppercase tracking-widest text-outline font-bold mb-3 block">Threat Level</label>
+<select class="w-full bg-transparent border-none border-b-2 border-outline-variant/30 focus:ring-0 text-on-surface py-2 appearance-none">
+<option>All severities</option>
+<option>Critical (L5)</option>
+<option>High (L4)</option>
+<option>Medium (L3)</option>
+</select>
+</div>
+<div class="bg-surface-container p-6 rounded-xl">
+<label class="text-[10px] uppercase tracking-widest text-outline font-bold mb-3 block">Date Range</label>
+<select class="w-full bg-transparent border-none border-b-2 border-outline-variant/30 focus:ring-0 text-on-surface py-2 appearance-none">
+<option>Last 30 Days</option>
+<option>Last Quarter</option>
+<option>Full Archive</option>
+</select>
+</div>
+</div>
+<!-- Asymmetric Grid for Reports -->
+<div class="space-y-4">
+<!-- Report Item 1 (Critical) -->
+<div class="group bg-surface-container-low hover:bg-surface-container-high transition-all rounded-xl overflow-hidden flex flex-col md:flex-row items-stretch border border-outline-variant/5">
+<div class="w-full md:w-48 h-32 md:h-auto relative overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Abstract data visualization of a cybersecurity report preview with glowing red nodes and dark UI elements" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKX6IeJCyxtAPbsPk11uMwVhctCkLfuU3Qt2obQHdyVe06jW_Je7fiiPxv_OghefiZ1opAl2T9OBp0GUM42XGIARvXaLq2sWdtPatB2FTMhYhntZ1tbOPwA6U43Iyw-ozOpfnsAOzTpsQ3BGPy01IAAf3lDU37EO_q_4gByMj_aNOspSX3-aUU_l5nx3tMxTJpm-XastptqtATFDM3cq7pWP6HUtTSGgSpGIcO7M4yfl1wV96B-ZaoGzN8Roqe89ImvuIUj_F1C1M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_rgba(255,180,171,0.6)]"></span>
+<span class="text-[10px] font-bold text-error uppercase tracking-tighter">Critical</span>
+</div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Intrusion Vector Analysis: VOR-992</h3>
+<p class="text-sm text-on-surface-variant font-body mt-1">Client: <span class="text-primary">Stellar Logistics Inc.</span></p>
+</div>
+<div class="text-right">
+<span class="text-[10px] text-outline uppercase font-bold tracking-widest block">Generated</span>
+<span class="text-sm font-medium text-on-surface">Oct 24, 2023</span>
+</div>
+</div>
+<div class="flex items-center gap-6 mt-4">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+              2.4 MB
+            </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              MD5: f3a8...e912
+            </div>
+</div>
+</div>
+<div class="bg-surface-container flex md:flex-col items-center justify-center p-4 gap-4 border-l border-outline-variant/10">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-white transition-colors" title="Share with Client">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" title="Delete Archive">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</div>
+</div>
+<!-- Report Item 2 (Secure) -->
+<div class="group bg-surface-container-low hover:bg-surface-container-high transition-all rounded-xl overflow-hidden flex flex-col md:flex-row items-stretch border border-outline-variant/5">
+<div class="w-full md:w-48 h-32 md:h-auto relative overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Technical graph showing clean security trends with green highlights and professional typography layout" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ5aTTVAuh1m1G0o7b_24qiHvVsYgxlhZiudxISuJolpv1-yU6pyLu5BICVzzAirmlVwRS_0-__BoY3miPTdCO4TuUybe4dBYCGPCOuXQ4sCO-6BcBVF9TWDBBelBpt8Dcd2zCcSbGQy9KcH8hF5lTneX1VWnzksr6FH4vjgXU8mkNXe0Ra0PwEC7UkKKvaQqFRTzGL5fIQf7qgFcaSNydDEDwNAZ-Y2kDVX0mdfqigT2dQ8Or1ZXsobyFfcoXhEFwOsxBOccGTmI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(74,225,131,0.6)]"></span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Secure</span>
+</div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Monthly Compliance Audit: Q3 FY23</h3>
+<p class="text-sm text-on-surface-variant font-body mt-1">Client: <span class="text-primary">Apex Financial Group</span></p>
+</div>
+<div class="text-right">
+<span class="text-[10px] text-outline uppercase font-bold tracking-widest block">Generated</span>
+<span class="text-sm font-medium text-on-surface">Oct 21, 2023</span>
+</div>
+</div>
+<div class="flex items-center gap-6 mt-4">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+              8.1 MB
+            </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              MD5: a1c9...77b1
+            </div>
+</div>
+</div>
+<div class="bg-surface-container flex md:flex-col items-center justify-center p-4 gap-4 border-l border-outline-variant/10">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-white transition-colors" title="Share with Client">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" title="Delete Archive">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</div>
+</div>
+<!-- Report Item 3 (Warning) -->
+<div class="group bg-surface-container-low hover:bg-surface-container-high transition-all rounded-xl overflow-hidden flex flex-col md:flex-row items-stretch border border-outline-variant/5">
+<div class="w-full md:w-48 h-32 md:h-auto relative overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Close-up of code on a monitor with orange warning syntax highlighting and blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkc5TyTe7LRSCsqQ01Qq-L1E6uVihzhZUpSclk-M2AvC-INqsSwRyQ4rvShvp7vRSwCV6tda9V-MhL_8ll2KsBv4_rdG6B6LLk7EUAcycPUumene_4K15icD69nzNJt98ApR464akknK9fKdvXgXs7JiRbExuyYrKKzVE-RKy5lM6hE_1uk-2dxj-rfIf4vW-Gpij6nTOuUmawfCkFfmhrGdh87ESk15UfLS_XTEljeol6FkSNf666l1QVuS4fKY4sBLj0Ebz-KQI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(255,183,131,0.6)]"></span>
+<span class="text-[10px] font-bold text-tertiary uppercase tracking-tighter">Warning</span>
+</div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Phishing Campaign Simulation: Results</h3>
+<p class="text-sm text-on-surface-variant font-body mt-1">Client: <span class="text-primary">NeoHealth Systems</span></p>
+</div>
+<div class="text-right">
+<span class="text-[10px] text-outline uppercase font-bold tracking-widest block">Generated</span>
+<span class="text-sm font-medium text-on-surface">Oct 18, 2023</span>
+</div>
+</div>
+<div class="flex items-center gap-6 mt-4">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+              1.2 MB
+            </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              MD5: d8d2...cc30
+            </div>
+</div>
+</div>
+<div class="bg-surface-container flex md:flex-col items-center justify-center p-4 gap-4 border-l border-outline-variant/10">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-white transition-colors" title="Share with Client">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" title="Delete Archive">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination / View More -->
+<div class="mt-12 flex justify-center">
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant hover:text-white transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant hover:text-white transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Contextual Floating Panel (Selected Items Action) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#1b1b1f]/90 backdrop-blur-xl px-6 py-4 rounded-full border border-outline-variant/20 shadow-2xl z-50 flex items-center gap-8 translate-y-24 transition-transform pointer-events-none group-focus-within:translate-y-0 group-focus-within:pointer-events-auto">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">3</span>
+<span class="text-sm font-medium">Reports selected</span>
+</div>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 text-sm font-bold text-primary hover:opacity-80">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+        Batch Export
+      </button>
+<button class="flex items-center gap-2 text-sm font-bold text-secondary hover:opacity-80">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+        Send to Clients
+      </button>
+</div>
+</div>
+</body></html>

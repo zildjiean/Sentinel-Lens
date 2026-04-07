@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sentinel Translate - Analysis Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#00210c",
+              "on-primary": "#263046",
+              "outline": "#8e9196",
+              "on-tertiary-container": "#ca6904",
+              "secondary": "#4ae183",
+              "background": "#131317",
+              "on-primary-fixed-variant": "#3c475d",
+              "surface-dim": "#131317",
+              "tertiary-fixed": "#ffdcc5",
+              "on-secondary": "#003919",
+              "on-error-container": "#ffdad6",
+              "on-primary-fixed": "#101b30",
+              "primary-container": "#0f1a2e",
+              "primary-fixed": "#d7e2ff",
+              "surface": "#131317",
+              "inverse-primary": "#545e76",
+              "tertiary": "#ffb783",
+              "surface-container-highest": "#353439",
+              "on-error": "#690005",
+              "surface-container-high": "#2a2a2e",
+              "surface-variant": "#353439",
+              "surface-container-lowest": "#0e0e12",
+              "on-primary-container": "#78839c",
+              "surface-container-low": "#1b1b1f",
+              "outline-variant": "#44474c",
+              "inverse-on-surface": "#303034",
+              "error": "#ffb4ab",
+              "secondary-fixed-dim": "#4ae183",
+              "on-surface": "#e4e1e7",
+              "surface-tint": "#bbc6e2",
+              "on-secondary-fixed-variant": "#005228",
+              "on-surface-variant": "#c4c6cc",
+              "error-container": "#93000a",
+              "secondary-fixed": "#6bfe9c",
+              "on-background": "#e4e1e7",
+              "tertiary-container": "#2e1300",
+              "primary-fixed-dim": "#bbc6e2",
+              "on-tertiary-fixed-variant": "#713700",
+              "primary": "#bbc6e2",
+              "surface-container": "#1f1f23",
+              "on-tertiary": "#4f2500",
+              "surface-bright": "#39393d",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-secondary-container": "#00431f",
+              "on-tertiary-fixed": "#301400",
+              "secondary-container": "#06bb63",
+              "inverse-surface": "#e4e1e7"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body { background-color: #131317; color: #e4e1e7; }
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #131317; }
+      ::-webkit-scrollbar-thumb { background: #353439; border-radius: 10px; }
+      .glass-panel { backdrop-filter: blur(16px); background: rgba(19, 19, 23, 0.8); }
+    </style>
+</head>
+<body class="font-body selection:bg-primary/30">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-[#1b1b1f] dark:bg-slate-900 flex flex-col h-full py-6 px-4 z-50">
+<div class="mb-10 px-2">
+<h1 class="text-xl font-bold tracking-tighter text-[#bbc6e2] font-headline">Sentinel Lens</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-on-primary-container font-semibold mt-1">Cybersecurity Intelligence</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23] transition-colors duration-200 text-sm tracking-wide font-headline" href="#">
+<span class="material-symbols-outlined" data-icon="rss_feed">rss_feed</span> Intelligence Feed
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#2a2a2e] text-[#bbc6e2] font-semibold border-l-4 border-[#bbc6e2] text-sm tracking-wide font-headline" href="#">
+<span class="material-symbols-outlined" data-icon="g_translate">g_translate</span> Translation Lab
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23] transition-colors duration-200 text-sm tracking-wide font-headline" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span> Report Archive
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23] transition-colors duration-200 text-sm tracking-wide font-headline" href="#">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span> Export Center
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1f1f23] transition-colors duration-200 text-sm tracking-wide font-headline" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span> Security Settings
+            </a>
+</nav>
+<div class="mt-auto space-y-4">
+<button class="w-full bg-primary text-on-primary py-2.5 rounded-md font-semibold text-sm transition-all active:opacity-90">
+                New Analysis
+            </button>
+<div class="pt-4 border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-slate-200 text-xs font-headline" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help_outline">help_outline</span> Support
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-slate-200 text-xs font-headline" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="logout">logout</span> Sign Out
+                </a>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-[#131317]/80 backdrop-blur-md flex justify-between items-center px-8 w-full border-b-0 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-8">
+<span class="hidden md:block text-lg font-extrabold text-[#bbc6e2] font-headline tracking-tight">Sentinel Translate</span>
+<nav class="flex gap-6">
+<a class="text-slate-400 hover:text-white transition-opacity font-['Inter'] text-sm font-medium" href="#">Global Feed</a>
+<a class="text-[#bbc6e2] border-b-2 border-[#bbc6e2] pb-1 font-['Inter'] text-sm font-medium" href="#">My Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500 text-sm">search</span>
+</div>
+<input class="bg-surface-container-lowest border-none focus:ring-1 focus:ring-[#bbc6e2]/30 rounded-md pl-10 pr-4 py-1.5 text-sm w-64 text-on-surface" placeholder="Search archives..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined">history</span></button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of a cybersecurity analyst in a dark environment with blue ambient rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7SYHQD8DctBaJ7fQ-FbN_fBhuo2Cd-QrKS8QVVWXwF8ICHNPRnyWIkRvEpGHj9Btv8cjYKqDRjQuH-vy3R4FHOiIsGHe8AvteiIi4ikdcAZQuVUR1uzsDCerSHD7deagbwLDqFcTMsBa14TftSClfVeZABr-AT-b1_GmiIc6AY9t-8mjDKWK3a0jzFy91H6KE_y9p8pfJYbfvQTZLDj59hXG03ScAzd8GlvCKfxycrD6ydk2Aoc89JVyitQZrCiwZNFZkxp-xjGM"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 pt-16 min-h-screen bg-surface">
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Toolbar -->
+<div class="flex items-center justify-between mb-8 p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-4">
+<div class="flex bg-surface-container-lowest p-1 rounded-lg">
+<button class="px-4 py-1.5 rounded-md bg-surface-container-high text-primary text-xs font-semibold shadow-sm">Translate</button>
+<button class="px-4 py-1.5 rounded-md text-slate-500 text-xs font-medium hover:text-slate-300 transition-colors">Compare</button>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant/20"></div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-400 hover:bg-surface-container-high rounded-md transition-all" title="Verify Technical Terms">
+<span class="material-symbols-outlined text-lg" data-icon="fact_check">fact_check</span>
+</button>
+<button class="p-2 text-slate-400 hover:bg-surface-container-high rounded-md transition-all" title="Edit Translation">
+<span class="material-symbols-outlined text-lg" data-icon="edit_note">edit_note</span>
+</button>
+<button class="p-2 text-slate-400 hover:bg-surface-container-high rounded-md transition-all" title="Translation History">
+<span class="material-symbols-outlined text-lg" data-icon="update">update</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative group">
+<button class="flex items-center gap-2 bg-primary text-on-primary px-5 py-2 rounded-md font-bold text-sm hover:opacity-90 transition-all shadow-[0_4px_12px_rgba(187,198,226,0.2)]">
+<span class="material-symbols-outlined text-sm" data-icon="picture_as_pdf">picture_as_pdf</span>
+                            Export to PDF
+                            <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<div class="absolute right-0 mt-2 w-48 bg-surface-container-high glass-panel rounded-xl hidden group-hover:block border border-outline-variant/10 overflow-hidden shadow-2xl">
+<button class="w-full text-left px-4 py-3 text-xs font-medium hover:bg-primary/10 transition-colors flex items-center justify-between">
+                                Executive Briefing
+                                <span class="w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button class="w-full text-left px-4 py-3 text-xs font-medium hover:bg-primary/10 transition-colors flex items-center justify-between border-t border-outline-variant/10">
+                                Engineering Deep-Dive
+                                <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Dual Pane Interface -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-outline-variant/10 rounded-2xl overflow-hidden shadow-2xl">
+<!-- Left Pane: English -->
+<div class="bg-surface-container-low p-8 flex flex-col h-[716px]">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 bg-primary-container text-primary text-[10px] font-bold rounded uppercase tracking-wider">Source</span>
+<h2 class="font-headline font-bold text-slate-200">English (US)</h2>
+</div>
+<span class="text-[10px] text-slate-500 font-mono">Confidence: 99.8%</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-4">
+<h3 class="text-2xl font-headline font-extrabold text-white mb-6 leading-tight">Advanced Persistent Threat Group 'Zodiac' Targets Critical Energy Infrastructure via Zero-Day Vulnerability</h3>
+<p class="text-sm text-slate-300 leading-relaxed mb-6 font-body">
+                            Recent telemetry gathered from edge nodes in Northern Europe indicates a coordinated campaign by a threat actor currently identified as Zodiac. The group is leveraging a previously undocumented zero-day vulnerability (tracked internally as SL-2024-089) within industrial control systems to maintain persistent access.
+                        </p>
+<p class="text-sm text-slate-300 leading-relaxed mb-6 font-body">
+                            The attack vector involves a sophisticated phishing operation targeting high-level systems administrators. Upon successful compromise, the payload executes a memory-resident RAT (Remote Access Trojan) that bypasses standard heuristic-based detection layers.
+                        </p>
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-tertiary">
+<p class="text-xs font-mono text-tertiary uppercase mb-2">Technical Insight</p>
+<p class="text-xs text-slate-400 italic">"The payload exhibits behavior consistent with state-sponsored activity, specifically in its avoidance of disk-level writes and use of encrypted C2 channels over HTTPS."</p>
+</div>
+</div>
+</div>
+<!-- Right Pane: Thai -->
+<div class="bg-surface-container p-8 flex flex-col h-[716px]">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded uppercase tracking-wider">Target</span>
+<h2 class="font-headline font-bold text-slate-200">Thai (ภาษาไทย)</h2>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[10px] text-secondary font-semibold uppercase">Verified Translation</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto pr-4">
+<h3 class="text-2xl font-headline font-extrabold text-white mb-6 leading-tight">กลุ่มภัยคุกคามขั้นสูง 'Zodiac' มุ่งเป้าโจมตีโครงสร้างพื้นฐานพลังงานที่สำคัญผ่านช่องโหว่ Zero-Day</h3>
+<p class="text-sm text-slate-300 leading-relaxed mb-6 font-body">
+                            ข้อมูลทางไกล (Telemetry) ล่าสุดที่รวบรวมได้จากโหนดเครือข่ายส่วนหน้าในยุโรปตอนเหนือ บ่งชี้ถึงแผนการโจมตีที่ประสานงานโดยกลุ่มผู้ไม่หวังดีซึ่งขณะนี้ได้รับการระบุชื่อว่า Zodiac กลุ่มนี้กำลังใช้ประโยชน์จากช่องโหว่ zero-day ที่ไม่เคยมีบันทึกมาก่อน (รหัสภายใน SL-2024-089) ภายในระบบควบคุมอุตสาหกรรมเพื่อรักษาการเข้าถึงแบบถาวร
+                        </p>
+<p class="text-sm text-slate-300 leading-relaxed mb-6 font-body">
+                            ช่องทางการโจมตีเกี่ยวข้องกับปฏิบัติการฟิชชิ่งที่ซับซ้อนซึ่งมุ่งเป้าไปที่ผู้ดูแลระบบระดับสูง เมื่อการบุกรุกสำเร็จ ชุดคำสั่งอันตราย (Payload) จะรัน RAT (Remote Access Trojan) ที่ฝังอยู่ในหน่วยความจำ ซึ่งสามารถเลี่ยงชั้นการตรวจจับตามหลักฮิวริสติกมาตรฐานได้
+                        </p>
+<div class="bg-surface-container-lowest p-4 rounded-xl border-l-4 border-secondary">
+<p class="text-xs font-mono text-secondary uppercase mb-2">ข้อมูลเชิงลึกทางเทคนิค</p>
+<p class="text-xs text-slate-400 italic">"ชุดคำสั่งแสดงพฤติกรรมที่สอดคล้องกับกิจกรรมที่ได้รับการสนับสนุนจากรัฐ โดยเฉพาะอย่างยิ่งในการหลีกเลี่ยงการเขียนข้อมูลลงในดิสก์และการใช้ช่องทาง C2 ที่เข้ารหัสผ่าน HTTPS"</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Contextual Intelligence Cards -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">shield_lock</span>
+</div>
+<h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Risk Level</h4>
+<div class="flex items-end gap-3">
+<span class="text-4xl font-headline font-extrabold text-error">CRITICAL</span>
+<div class="flex-1 h-1.5 bg-surface-container-high rounded-full mb-2 overflow-hidden">
+<div class="h-full bg-error w-[92%]"></div>
+</div>
+</div>
+<p class="text-[11px] text-slate-400 mt-4 leading-relaxed">Systemic vulnerability detected in SCADA protocols. Immediate patching of edge gateways required.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">translate</span>
+</div>
+<h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Term Accuracy</h4>
+<div class="flex items-center gap-4">
+<div class="relative w-14 h-14">
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path class="stroke-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="stroke-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="88, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold">88%</span>
+</div>
+<div>
+<span class="text-xl font-headline font-extrabold text-white">OPTIMIZED</span>
+<p class="text-[11px] text-slate-400 mt-1">12 technical terms auto-verified via NIST glossary.</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl">insights</span>
+</div>
+<h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Analyst Verdict</h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-slate-300">Tone: Objective</span>
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#4ae183]"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-slate-300">Grammar: Native</span>
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#4ae183]"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-slate-300">Technical Context: High</span>
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#4ae183]"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Stats (No borders, only tonal shifts) -->
+<footer class="mt-12 py-8 bg-surface-container-lowest rounded-2xl px-12 flex flex-wrap gap-12 items-center justify-between">
+<div class="flex gap-12">
+<div>
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Words Translated</p>
+<p class="text-xl font-headline font-bold text-[#bbc6e2]">1,284</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Processing Time</p>
+<p class="text-xl font-headline font-bold text-[#bbc6e2]">1.4s</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-bold uppercase mb-1">API Node</p>
+<p class="text-xl font-headline font-bold text-[#bbc6e2]">US-EAST-1</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<img class="w-32 h-12 rounded-lg object-cover grayscale opacity-30" data-alt="Macro circuit board texture with neon blue traces and glowing components in a futuristic server room setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFJdIqK5n_eNaTQSsbKF5d54qmmioPEB1HzTWxxBJMDFbPTHMyARiJXIK7BqT7XV1Il4LVn79tZ-sLx-y85ApFwfxgvbNWY-_4a1YN4dxe7IzHYoynoTf3sXqYllqIAAIyAva_4X_dcMP0Uwdv3js8Fln5IT9E0BvxAKtx9MY4ETE45Of6XgVGrmmiGzdKg51aVTMt_q75_Cso2-mwbSXjOcvBz2FsqivA6iTnKTcG9oNm_D88mg48GhvXO5qsGLpLjME3xR25tBY"/>
+<p class="text-[10px] text-slate-500 max-w-xs leading-tight">Secure translation session encrypted with AES-256. Analysis data is not used for external training models.</p>
+</div>
+</footer>
+</div>
+</main>
+</body></html>
