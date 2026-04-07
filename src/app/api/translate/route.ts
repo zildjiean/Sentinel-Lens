@@ -110,20 +110,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Already translated" });
   }
 
-  // Get LLM settings
+  // Get LLM settings (support both combined llm_api_keys and separate gemini_api_key/openrouter_api_key)
   const { data: settings } = await supabase
     .from("app_settings")
     .select("key, value")
-    .in("key", ["llm_provider", "llm_api_keys"]);
+    .in("key", ["llm_provider", "llm_api_keys", "gemini_api_key", "openrouter_api_key"]);
 
   const providerSetting = settings?.find((s) => s.key === "llm_provider");
   const keysSetting = settings?.find((s) => s.key === "llm_api_keys");
+  const geminiKeySetting = settings?.find((s) => s.key === "gemini_api_key");
+  const openrouterKeySetting = settings?.find((s) => s.key === "openrouter_api_key");
 
   const provider = ((providerSetting?.value as string) || "gemini").replace(/"/g, "");
   const keys = (keysSetting?.value as Record<string, string>) || {};
 
-  const geminiKey = keys.gemini || process.env.GEMINI_API_KEY || "";
-  const openrouterKey = keys.openrouter || process.env.OPENROUTER_API_KEY || "";
+  // Check combined keys first, then separate key rows, then env vars
+  const geminiKey = keys.gemini || ((geminiKeySetting?.value as string) || "").replace(/"/g, "") || process.env.GEMINI_API_KEY || "";
+  const openrouterKey = keys.openrouter || ((openrouterKeySetting?.value as string) || "").replace(/"/g, "") || process.env.OPENROUTER_API_KEY || "";
 
   const activeKey = provider === "gemini" ? geminiKey : openrouterKey;
   if (!activeKey) {
