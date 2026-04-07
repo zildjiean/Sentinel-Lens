@@ -1,0 +1,33 @@
+INSERT INTO rss_sources (name, url) VALUES
+  ('The Hacker News', 'https://feeds.feedburner.com/TheHackersNews'),
+  ('BleepingComputer', 'https://www.bleepingcomputer.com/feed/'),
+  ('Krebs on Security', 'https://krebsonsecurity.com/feed/'),
+  ('Dark Reading', 'https://www.darkreading.com/rss.xml'),
+  ('SecurityWeek', 'https://feeds.feedburner.com/securityweek'),
+  ('Threatpost', 'https://threatpost.com/feed/');
+
+INSERT INTO articles (title, content, excerpt, severity, status, published_at, tags) VALUES
+  ('Critical Zero-Day Vulnerability Found in Major Enterprise VPN',
+   'Security researchers have discovered a critical zero-day vulnerability (CVE-2026-1234) affecting multiple enterprise VPN solutions. The flaw allows unauthenticated remote code execution and has been actively exploited in the wild by APT29 threat actors.',
+   'A critical zero-day in enterprise VPN products is being actively exploited by APT29. Patch immediately.',
+   'critical', 'new', now() - interval '2 hours', ARRAY['zero-day', 'VPN', 'APT29', 'CVE-2026-1234']),
+  ('Ransomware Group Deploys New Evasion Technique Against EDR',
+   'The BlackCat ransomware group has developed a novel technique to bypass endpoint detection and response (EDR) solutions.',
+   'BlackCat ransomware bypasses EDR using signed kernel drivers.',
+   'high', 'new', now() - interval '5 hours', ARRAY['ransomware', 'BlackCat', 'EDR']),
+  ('NIST Releases Updated Cybersecurity Framework 3.0 Guidelines',
+   'The National Institute of Standards and Technology has published version 3.0 of its Cybersecurity Framework.',
+   'NIST CSF 3.0 released with major updates to supply chain security.',
+   'medium', 'new', now() - interval '8 hours', ARRAY['NIST', 'framework', 'compliance']),
+  ('Microsoft Patches 87 Vulnerabilities Including 3 Critical RCE Flaws',
+   'Microsoft April 2026 Patch Tuesday addresses 87 security vulnerabilities across Windows, Office, and Azure services.',
+   'April 2026 Patch Tuesday: 87 fixes including 3 critical Exchange RCE flaws.',
+   'high', 'new', now() - interval '12 hours', ARRAY['Microsoft', 'patch-tuesday', 'Exchange']),
+  ('New Phishing Campaign Targets Financial Sector with AI-Generated Lures',
+   'Researchers have identified a sophisticated phishing campaign using AI-generated content to target banking employees.',
+   'AI-powered phishing campaign targets 200+ APAC financial institutions.',
+   'high', 'new', now() - interval '1 day', ARRAY['phishing', 'AI', 'deepfake']),
+  ('Open Source Supply Chain Attack Compromises Popular NPM Package',
+   'A supply chain attack has been discovered in a widely-used NPM package with over 2 million weekly downloads.',
+   'Popular NPM package with 2M+ weekly downloads compromised in supply chain attack.',
+   'critical', 'new', now() - interval '1 day', ARRAY['supply-chain', 'NPM', 'open-source']);
