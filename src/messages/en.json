@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "intelligenceFeed": "Intelligence Feed",
+    "translationLab": "Translation Lab",
+    "reportArchive": "Report Archive",
+    "exportCenter": "Export Center",
+    "settings": "Security Settings",
+    "newAnalysis": "New Analysis",
+    "support": "Support",
+    "signOut": "Sign Out"
+  },
+  "feed": {
+    "title": "Morning Intel Briefing",
+    "subtitle": "Your curated cybersecurity intelligence feed.",
+    "feedRelevance": "Feed Relevance",
+    "activeThreats": "Active Threats",
+    "criticalAlerts": "Critical Alerts",
+    "latestIntelligence": "Latest Intelligence",
+    "translate": "Translate",
+    "networkHealth": "Network Health",
+    "threatLevel": "Threat Level"
+  },
+  "translation": {
+    "source": "Source",
+    "target": "Target",
+    "confidence": "Confidence",
+    "verified": "Verified Translation",
+    "riskLevel": "Risk Level",
+    "termAccuracy": "Term Accuracy",
+    "analystVerdict": "Analyst Verdict"
+  },
+  "report": {
+    "archive": "Report Archive",
+    "generate": "Generate Report",
+    "totalExports": "Total Exports",
+    "verifiedDelivery": "Verified Delivery",
+    "download": "Download",
+    "share": "Share"
+  },
+  "common": {
+    "search": "Search threats...",
+    "globalFeed": "Global Feed",
+    "myReports": "My Reports"
+  }
+}

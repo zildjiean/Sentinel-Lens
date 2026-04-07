@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "intelligenceFeed": "ฟีดข่าวกรอง",
+    "translationLab": "ห้องปฏิบัติการแปล",
+    "reportArchive": "คลังรายงาน",
+    "exportCenter": "ศูนย์ส่งออก",
+    "settings": "ตั้งค่าความปลอดภัย",
+    "newAnalysis": "วิเคราะห์ใหม่",
+    "support": "ช่วยเหลือ",
+    "signOut": "ออกจากระบบ"
+  },
+  "feed": {
+    "title": "สรุปข่าวกรองประจำเช้า",
+    "subtitle": "ฟีดข่าวกรองไซเบอร์ที่คัดสรรโดย AI",
+    "feedRelevance": "ความเกี่ยวข้องของฟีด",
+    "activeThreats": "ภัยคุกคามที่ใช้งานอยู่",
+    "criticalAlerts": "การแจ้งเตือนวิกฤต",
+    "latestIntelligence": "ข่าวกรองล่าสุด",
+    "translate": "แปล",
+    "networkHealth": "สุขภาพเครือข่าย",
+    "threatLevel": "ระดับภัยคุกคาม"
+  },
+  "translation": {
+    "source": "ต้นฉบับ",
+    "target": "เป้าหมาย",
+    "confidence": "ความเชื่อมั่น",
+    "verified": "การแปลที่ยืนยันแล้ว",
+    "riskLevel": "ระดับความเสี่ยง",
+    "termAccuracy": "ความถูกต้องของคำศัพท์",
+    "analystVerdict": "การตัดสินของนักวิเคราะห์"
+  },
+  "report": {
+    "archive": "คลังรายงาน",
+    "generate": "สร้างรายงาน",
+    "totalExports": "ส่งออกทั้งหมด",
+    "verifiedDelivery": "การจัดส่งที่ยืนยัน",
+    "download": "ดาวน์โหลด",
+    "share": "แชร์"
+  },
+  "common": {
+    "search": "ค้นหาภัยคุกคาม...",
+    "globalFeed": "ฟีดทั่วโลก",
+    "myReports": "รายงานของฉัน"
+  }
+}
