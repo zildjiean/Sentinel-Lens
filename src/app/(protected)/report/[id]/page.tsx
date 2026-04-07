@@ -1,20 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { ReportHeader } from "@/components/report/ReportHeader";
 import { ReportViewer } from "@/components/report/ReportViewer";
 import type { Report } from "@/lib/types/database";
 import { notFound } from "next/navigation";
 
-interface PageProps {
-  params: { id: string };
-}
-
-export default async function ReportViewPage({ params }: PageProps) {
+export default async function ReportViewPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data } = await supabase
     .from("reports")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!data) {
@@ -25,30 +25,10 @@ export default async function ReportViewPage({ params }: PageProps) {
 
   return (
     <div>
-      {/* Sticky header */}
-      <div className="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 -mx-8 px-8 py-3 mb-8 flex items-center justify-between no-print">
-        <div className="flex items-center gap-3">
-          <Badge severity={report.severity} />
-          <span className="text-xs uppercase tracking-widest text-tertiary font-semibold">
-            {report.classification}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm">
-            <span className="material-symbols-outlined text-lg">download</span>
-            Download
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => {}}>
-            <span className="material-symbols-outlined text-lg">print</span>
-            Print
-          </Button>
-          <Button variant="ghost" size="sm">
-            <span className="material-symbols-outlined text-lg">share</span>
-            Share
-          </Button>
-        </div>
-      </div>
-
+      <ReportHeader
+        severity={report.severity}
+        classification={report.classification}
+      />
       <ReportViewer report={report} />
     </div>
   );
