@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { TranslateButton } from "@/components/feed/TranslateButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -71,6 +72,11 @@ export default async function ArticleDetailPage({
           {article.content}
         </div>
       </Card>
+
+      {/* Translate button (show when no translation exists) */}
+      {!translation && (
+        <TranslateButton articleId={article.id} />
+      )}
 
       {/* Translation section */}
       {translation && (
