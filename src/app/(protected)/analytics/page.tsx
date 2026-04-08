@@ -6,44 +6,60 @@ export const revalidate = 300; // Cache for 5 minutes
 export default async function AnalyticsPage() {
   const supabase = await createClient();
 
-  // Limit to last 1000 articles for performance
-  const { data: articles } = await supabase
-    .from("articles")
-    .select("id, severity, status, published_at, source_id")
-    .order("published_at", { ascending: false })
-    .limit(1000);
+  // Parallel queries — use count queries and limit data fetch to 30 days
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const cutoffDate = thirtyDaysAgo.toISOString();
 
-  // Get sources for mapping
-  const { data: sources } = await supabase
-    .from("rss_sources")
-    .select("id, name");
+  const [
+    articlesResult,
+    sourcesResult,
+    translationResult,
+    reportResult,
+    // Severity counts via separate count queries (much faster than fetching 1000 rows)
+    criticalResult,
+    highResult,
+    mediumResult,
+    lowResult,
+    infoResult,
+  ] = await Promise.all([
+    // Only fetch last 30 days for daily chart + source breakdown
+    supabase
+      .from("articles")
+      .select("severity, published_at, source_id")
+      .gte("published_at", cutoffDate)
+      .order("published_at", { ascending: false })
+      .limit(500),
+    supabase.from("rss_sources").select("id, name"),
+    supabase.from("translations").select("id", { count: "exact", head: true }),
+    supabase.from("reports").select("id", { count: "exact", head: true }),
+    supabase.from("articles").select("id", { count: "exact", head: true }).eq("severity", "critical"),
+    supabase.from("articles").select("id", { count: "exact", head: true }).eq("severity", "high"),
+    supabase.from("articles").select("id", { count: "exact", head: true }).eq("severity", "medium"),
+    supabase.from("articles").select("id", { count: "exact", head: true }).eq("severity", "low"),
+    supabase.from("articles").select("id", { count: "exact", head: true }).eq("severity", "info"),
+  ]);
 
-  // Get translation count
-  const { count: translationCount } = await supabase
-    .from("translations")
-    .select("id", { count: "exact", head: true });
+  const articles = articlesResult.data ?? [];
+  const sources = sourcesResult.data ?? [];
+  const totalArticles = (criticalResult.count ?? 0) + (highResult.count ?? 0) + (mediumResult.count ?? 0) + (lowResult.count ?? 0) + (infoResult.count ?? 0);
 
-  // Get report count
-  const { count: reportCount } = await supabase
-    .from("reports")
-    .select("id", { count: "exact", head: true });
+  const severityCounts = {
+    critical: criticalResult.count ?? 0,
+    high: highResult.count ?? 0,
+    medium: mediumResult.count ?? 0,
+    low: lowResult.count ?? 0,
+    info: infoResult.count ?? 0,
+  };
 
-  // Process data for charts
-  const severityCounts = { critical: 0, high: 0, medium: 0, low: 0, info: 0 };
+  // Process 30-day data for charts
   const sourceCounts: Record<string, number> = {};
   const dailyCounts: Record<string, number> = {};
-  const sourceMap = new Map((sources ?? []).map((s: { id: string; name: string }) => [s.id, s.name]));
+  const sourceMap = new Map(sources.map((s: { id: string; name: string }) => [s.id, s.name]));
 
-  for (const a of articles ?? []) {
-    // Severity
-    severityCounts[a.severity as keyof typeof severityCounts] =
-      (severityCounts[a.severity as keyof typeof severityCounts] || 0) + 1;
-
-    // Source
+  for (const a of articles) {
     const sourceName = sourceMap.get(a.source_id) || "Unknown";
     sourceCounts[sourceName] = (sourceCounts[sourceName] || 0) + 1;
-
-    // Daily (last 30 days)
     const date = new Date(a.published_at).toISOString().split("T")[0];
     dailyCounts[date] = (dailyCounts[date] || 0) + 1;
   }
@@ -73,9 +89,9 @@ export default async function AnalyticsPage() {
         </p>
       </div>
       <AnalyticsDashboard
-        totalArticles={articles?.length ?? 0}
-        totalTranslations={translationCount ?? 0}
-        totalReports={reportCount ?? 0}
+        totalArticles={totalArticles}
+        totalTranslations={translationResult.count ?? 0}
+        totalReports={reportResult.count ?? 0}
         severityCounts={severityCounts}
         sourceData={sourceData}
         dailyData={dailyData}

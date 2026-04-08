@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
+import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { FeedFilter } from "@/components/feed/FeedFilter";
 import { ArticleGrid } from "@/components/feed/ArticleGrid";
 import { FetchRSSButton } from "@/components/feed/FetchRSSButton";
@@ -61,7 +62,7 @@ export function FilteredFeed({ articles }: FilteredFeedProps) {
 
       {/* Search */}
       <div className="relative mb-4">
-        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+        <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
         <input
           type="text"
           placeholder="Search articles by title, content, or tags..."
@@ -74,7 +75,7 @@ export function FilteredFeed({ articles }: FilteredFeedProps) {
             onClick={() => setSearch("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
           >
-            <span className="material-symbols-outlined text-lg">close</span>
+            <X className="w-5 h-5" />
           </button>
         )}
       </div>
@@ -101,7 +102,7 @@ export function FilteredFeed({ articles }: FilteredFeedProps) {
             disabled={page === 1}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-container-high text-on-surface-variant hover:text-on-surface disabled:opacity-30 transition-colors"
           >
-            <span className="material-symbols-outlined text-sm">chevron_left</span>
+            <ChevronLeft className="w-4 h-4" />
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
@@ -121,7 +122,7 @@ export function FilteredFeed({ articles }: FilteredFeedProps) {
             disabled={page === totalPages}
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-container-high text-on-surface-variant hover:text-on-surface disabled:opacity-30 transition-colors"
           >
-            <span className="material-symbols-outlined text-sm">chevron_right</span>
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}

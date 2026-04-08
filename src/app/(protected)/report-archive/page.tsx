@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { FilterBar } from "@/components/report/FilterBar";
 import { ReportCard } from "@/components/report/ReportCard";
 import type { Report } from "@/lib/types/database";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const PAGE_SIZE = 5;
 
@@ -126,9 +127,7 @@ export default function ReportArchivePage() {
             disabled={page === 0}
             onClick={() => setPage((p) => p - 1)}
           >
-            <span className="material-symbols-outlined text-lg">
-              chevron_left
-            </span>
+            <ChevronLeft className="w-5 h-5" />
             Previous
           </Button>
           <span className="text-sm text-on-surface-variant px-4">
@@ -141,9 +140,7 @@ export default function ReportArchivePage() {
             onClick={() => setPage((p) => p + 1)}
           >
             Next
-            <span className="material-symbols-outlined text-lg">
-              chevron_right
-            </span>
+            <ChevronRight className="w-5 h-5" />
           </Button>
         </div>
       )}

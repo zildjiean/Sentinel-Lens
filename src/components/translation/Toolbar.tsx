@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { ClipboardCheck, PenLine, RefreshCw, FileDown } from "lucide-react";
 
 type Tab = "translate" | "compare";
 
@@ -38,13 +39,13 @@ export function Toolbar() {
       {/* Tool buttons */}
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">fact_check</span>
+          <ClipboardCheck className="w-5 h-5" />
         </Button>
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">edit_note</span>
+          <PenLine className="w-5 h-5" />
         </Button>
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">update</span>
+          <RefreshCw className="w-5 h-5" />
         </Button>
 
         {/* Export with dropdown */}
@@ -54,9 +55,7 @@ export function Toolbar() {
             size="sm"
             onClick={() => setShowExportMenu(!showExportMenu)}
           >
-            <span className="material-symbols-outlined text-lg">
-              file_download
-            </span>
+            <FileDown className="w-5 h-5" />
             Export
           </Button>
           {showExportMenu && (

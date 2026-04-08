@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
+import { FileText, Languages, TriangleAlert, TrendingUp, Shield, Rss, type LucideIcon } from "lucide-react";
 
 interface AnalyticsDashboardProps {
   totalArticles: number;
@@ -71,15 +72,15 @@ export function AnalyticsDashboard({
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Articles", value: totalArticles, icon: "article", color: "text-primary" },
-          { label: "Translations", value: totalTranslations, icon: "translate", color: "text-secondary" },
-          { label: "Reports", value: totalReports, icon: "description", color: "text-tertiary" },
-          { label: "Critical Threats", value: severityCounts.critical || 0, icon: "warning", color: "text-error" },
-        ].map((kpi) => (
+        {([
+          { label: "Total Articles", value: totalArticles, icon: FileText, color: "text-primary" },
+          { label: "Translations", value: totalTranslations, icon: Languages, color: "text-secondary" },
+          { label: "Reports", value: totalReports, icon: FileText, color: "text-tertiary" },
+          { label: "Critical Threats", value: severityCounts.critical || 0, icon: TriangleAlert, color: "text-error" },
+        ] as { label: string; value: number; icon: LucideIcon; color: string }[]).map((kpi) => (
           <Card key={kpi.label} variant="low">
             <div className="flex items-center gap-3">
-              <span className={`material-symbols-outlined text-2xl ${kpi.color}`}>{kpi.icon}</span>
+              <kpi.icon className={`w-6 h-6 ${kpi.color}`} />
               <div>
                 <p className="font-headline text-2xl font-bold text-on-surface">{kpi.value}</p>
                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{kpi.label}</p>
@@ -93,7 +94,7 @@ export function AnalyticsDashboard({
         {/* Daily Trend Line Chart */}
         <Card variant="low" className="lg:col-span-2">
           <h3 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-lg text-primary">trending_up</span>
+            <TrendingUp className="w-5 h-5 text-primary" />
             Article Trend (30 Days)
           </h3>
           <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-auto">
@@ -129,7 +130,7 @@ export function AnalyticsDashboard({
         {/* Severity Donut Chart */}
         <Card variant="low">
           <h3 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-lg text-error">shield</span>
+            <Shield className="w-5 h-5 text-error" />
             Severity Distribution
           </h3>
           <div className="flex flex-col items-center">
@@ -160,7 +161,7 @@ export function AnalyticsDashboard({
       {/* Source Distribution Bar Chart */}
       <Card variant="low">
         <h3 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-secondary">rss_feed</span>
+          <Rss className="w-5 h-5 text-secondary" />
           Articles by Source
         </h3>
         <div className="space-y-3">

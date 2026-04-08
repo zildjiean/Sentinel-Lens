@@ -4,10 +4,35 @@ import { Card } from "@/components/ui/Card";
 import { TranslateButton } from "@/components/feed/TranslateButton";
 import { DeleteArticleButton } from "@/components/feed/DeleteArticleButton";
 import { BookmarkButton } from "@/components/feed/BookmarkButton";
+import { RelatedArticles } from "@/components/feed/RelatedArticles";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft, FileText, Link as LinkIcon, ExternalLink, Languages } from "lucide-react";
+import type { Metadata } from "next";
 
 export const revalidate = 60; // Cache for 1 minute
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: article } = await supabase
+    .from("articles")
+    .select("title, excerpt, image_url")
+    .eq("id", id)
+    .single();
+
+  if (!article) return { title: "Article Not Found" };
+
+  return {
+    title: `${article.title} | Sentinel Lens`,
+    description: article.excerpt || undefined,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || undefined,
+      ...(article.image_url ? { images: [{ url: article.image_url }] } : {}),
+    },
+  };
+}
 
 export default async function ArticleDetailPage({
   params,
@@ -59,7 +84,7 @@ export default async function ArticleDetailPage({
         href="/"
         className="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors"
       >
-        <span className="material-symbols-outlined text-lg">arrow_back</span>
+        <ArrowLeft className="w-5 h-5" />
         Back to Feed
       </Link>
 
@@ -102,7 +127,7 @@ export default async function ArticleDetailPage({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-[#263046] text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
+          <FileText className="w-5 h-5" />
           Download PDF Report
         </a>
         <BookmarkButton articleId={article.id} />
@@ -115,7 +140,7 @@ export default async function ArticleDetailPage({
       {article.url && (
         <Card variant="low">
           <div className="flex items-start gap-3">
-            <span className="material-symbols-outlined text-primary text-lg mt-0.5">link</span>
+            <LinkIcon className="w-5 h-5 text-primary mt-0.5" />
             <div className="min-w-0">
               <h3 className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-1">
                 Reference Source
@@ -135,7 +160,7 @@ export default async function ArticleDetailPage({
               rel="noopener noreferrer"
               className="ml-auto flex-shrink-0 text-on-surface-variant hover:text-primary transition-colors"
             >
-              <span className="material-symbols-outlined text-lg">open_in_new</span>
+              <ExternalLink className="w-5 h-5" />
             </a>
           </div>
         </Card>
@@ -150,7 +175,7 @@ export default async function ArticleDetailPage({
       {translation && (
         <Card variant="default">
           <div className="flex items-center gap-2 mb-4">
-            <span className="material-symbols-outlined text-primary">translate</span>
+            <Languages className="w-5 h-5 text-primary" />
             <h2 className="font-headline text-lg font-semibold text-on-surface">Thai Translation</h2>
             {translation.is_verified && (
               <Badge label="verified" className="bg-secondary/20 text-secondary" />
@@ -175,6 +200,9 @@ export default async function ArticleDetailPage({
           ))}
         </div>
       )}
+
+      {/* Related Articles */}
+      <RelatedArticles articleId={article.id} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Hourglass, Bookmark, BookmarkMinus } from "lucide-react";
 
 interface BookmarkItem {
   id: string;
@@ -58,13 +59,13 @@ export default function BookmarksPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40 text-on-surface-variant">
-          <span className="material-symbols-outlined animate-spin mr-2">hourglass_empty</span>
+          <Hourglass className="w-5 h-5 animate-spin mr-2" />
           Loading...
         </div>
       ) : bookmarks.length === 0 ? (
         <Card variant="low">
           <div className="flex flex-col items-center justify-center py-12 text-on-surface-variant">
-            <span className="material-symbols-outlined text-4xl mb-3">bookmark_border</span>
+            <Bookmark className="w-10 h-10 mb-3" />
             <p className="text-sm">No bookmarks yet. Bookmark articles to save them here.</p>
           </div>
         </Card>
@@ -95,7 +96,7 @@ export default function BookmarksPage() {
                   className="text-on-surface-variant hover:text-error transition-colors flex-shrink-0"
                   title="Remove bookmark"
                 >
-                  <span className="material-symbols-outlined text-lg">bookmark_remove</span>
+                  <BookmarkMinus className="w-5 h-5" />
                 </button>
               </div>
             </Card>

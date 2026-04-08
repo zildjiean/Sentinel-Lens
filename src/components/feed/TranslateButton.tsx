@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Languages, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface TranslateButtonProps {
@@ -43,7 +44,7 @@ export function TranslateButton({ articleId }: TranslateButtonProps) {
   if (success) {
     return (
       <div className="flex items-center gap-2 text-secondary text-sm">
-        <span className="material-symbols-outlined text-lg">check_circle</span>
+        <CheckCircle className="w-5 h-5" />
         Translation complete! Refreshing...
       </div>
     );
@@ -58,7 +59,7 @@ export function TranslateButton({ articleId }: TranslateButtonProps) {
         disabled={loading}
         className="gap-2"
       >
-        <span className="material-symbols-outlined text-lg">translate</span>
+        <Languages className="w-5 h-5" />
         {loading ? "Translating..." : "Translate to Thai"}
       </Button>
       {error && (

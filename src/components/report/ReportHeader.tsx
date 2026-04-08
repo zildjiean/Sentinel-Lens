@@ -2,7 +2,9 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Download, Printer, Share2 } from "lucide-react";
 import type { ArticleSeverity } from "@/lib/types/database";
+
 
 interface ReportHeaderProps {
   severity: ArticleSeverity;
@@ -24,15 +26,15 @@ export function ReportHeader({ severity, classification }: ReportHeaderProps) {
       </div>
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">download</span>
+          <Download className="w-5 h-5" />
           Download
         </Button>
         <Button variant="ghost" size="sm" onClick={handlePrint}>
-          <span className="material-symbols-outlined text-lg">print</span>
+          <Printer className="w-5 h-5" />
           Print
         </Button>
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">share</span>
+          <Share2 className="w-5 h-5" />
           Share
         </Button>
       </div>

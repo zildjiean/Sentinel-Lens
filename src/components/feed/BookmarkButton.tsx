@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Bookmark, PenLine } from "lucide-react";
 
 interface BookmarkButtonProps {
   articleId: string;
@@ -77,9 +78,7 @@ export function BookmarkButton({ articleId }: BookmarkButtonProps) {
           }`}
           title={bookmarked ? "Remove bookmark" : "Bookmark this article"}
         >
-          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: bookmarked ? "'FILL' 1" : "'FILL' 0" }}>
-            bookmark
-          </span>
+          <Bookmark className="w-4 h-4" fill={bookmarked ? "currentColor" : "none"} />
           {bookmarked ? "Bookmarked" : "Bookmark"}
         </button>
         {bookmarked && (
@@ -88,7 +87,7 @@ export function BookmarkButton({ articleId }: BookmarkButtonProps) {
             className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-on-surface-variant hover:bg-surface-container-high transition-colors"
             title="Add/edit note"
           >
-            <span className="material-symbols-outlined text-sm">edit_note</span>
+            <PenLine className="w-4 h-4" />
           </button>
         )}
       </div>

@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
+import { FileText, Download, Share2, Trash2 } from "lucide-react";
 import type { Report } from "@/lib/types/database";
 
 interface ReportCardProps {
@@ -21,9 +22,7 @@ export function ReportCard({ report, onDelete }: ReportCardProps) {
     <Card variant="low" className="flex flex-col md:flex-row gap-4">
       {/* Left: image placeholder */}
       <div className="md:w-48 h-32 md:h-auto rounded-lg bg-gradient-to-br from-surface-container-high to-surface-container-lowest relative overflow-hidden flex-shrink-0 flex items-center justify-center">
-        <span className="material-symbols-outlined text-4xl text-on-surface-variant/30">
-          description
-        </span>
+        <FileText className="w-10 h-10 text-on-surface-variant/30" />
         <div className="absolute bottom-2 left-2">
           <StatusIndicator
             status={statusMap[report.status] ?? "neutral"}
@@ -55,19 +54,17 @@ export function ReportCard({ report, onDelete }: ReportCardProps) {
       {/* Right: actions */}
       <div className="flex md:flex-col gap-2 flex-shrink-0">
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">download</span>
+          <Download className="w-5 h-5" />
         </Button>
         <Button variant="ghost" size="sm">
-          <span className="material-symbols-outlined text-lg">share</span>
+          <Share2 className="w-5 h-5" />
         </Button>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onDelete?.(report.id)}
         >
-          <span className="material-symbols-outlined text-lg text-error">
-            delete
-          </span>
+          <Trash2 className="w-5 h-5 text-error" />
         </Button>
       </div>
     </Card>

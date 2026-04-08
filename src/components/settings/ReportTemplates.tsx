@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Wand2, Plus, FileText, Pencil, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
@@ -113,12 +114,12 @@ export function ReportTemplates() {
         <div className="flex gap-2">
           {templates.length === 0 && (
             <Button variant="secondary" size="sm" onClick={initDefaults}>
-              <span className="material-symbols-outlined text-sm">auto_fix_high</span>
+              <Wand2 className="w-4 h-4" />
               Initialize Defaults
             </Button>
           )}
           <Button variant="ghost" size="sm" onClick={() => setShowAdd(!showAdd)}>
-            <span className="material-symbols-outlined text-sm">add</span>
+            <Plus className="w-4 h-4" />
             Add Template
           </Button>
         </div>
@@ -162,7 +163,7 @@ export function ReportTemplates() {
           <div key={tmpl.id} className="p-3 rounded-lg bg-surface-container-high/20 border border-outline-variant/10">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm text-primary">description</span>
+                <FileText className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium text-on-surface">{tmpl.name}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant">
                   {tmpl.type}
@@ -179,14 +180,14 @@ export function ReportTemplates() {
                   }}
                   className="p-1 text-on-surface-variant hover:text-on-surface transition-colors"
                 >
-                  <span className="material-symbols-outlined text-sm">edit</span>
+                  <Pencil className="w-4 h-4" />
                 </button>
                 {!tmpl.is_default && (
                   <button
                     onClick={() => deleteTemplate(tmpl.id)}
                     className="p-1 text-on-surface-variant hover:text-error transition-colors"
                   >
-                    <span className="material-symbols-outlined text-sm">delete</span>
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 )}
               </div>

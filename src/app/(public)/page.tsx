@@ -1,7 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroBriefing } from "@/components/feed/HeroBriefing";
 import { FilteredFeed } from "@/components/feed/FilteredFeed";
-import { ChatBubble } from "@/components/chat/ChatBubble";
+import dynamic from "next/dynamic";
+
+const ChatBubble = dynamic(() => import("@/components/chat/ChatBubble").then(m => ({ default: m.ChatBubble })), {
+  ssr: false,
+});
 import type { ArticleWithTranslation } from "@/lib/types/database";
 
 export const revalidate = 300;

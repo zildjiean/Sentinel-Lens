@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 interface DeleteArticleButtonProps {
   articleId: string;
@@ -46,7 +47,7 @@ export function DeleteArticleButton({ articleId, articleTitle }: DeleteArticleBu
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-error hover:bg-error/10 transition-colors disabled:opacity-50"
       title="Delete this article (Admin only)"
     >
-      <span className="material-symbols-outlined text-sm">delete</span>
+      <Trash2 className="w-4 h-4" />
       {deleting ? "Deleting..." : "Delete"}
     </button>
   );

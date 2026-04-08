@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Languages, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { ArticleWithTranslation } from "@/lib/types/database";
@@ -125,13 +126,9 @@ export function HeroBriefing({
                     </p>
                   </div>
                   {article.translations && (
-                    <span className="material-symbols-outlined text-sm text-secondary flex-shrink-0">
-                      translate
-                    </span>
+                    <Languages className="w-4 h-4 text-secondary flex-shrink-0" />
                   )}
-                  <span className="material-symbols-outlined text-sm text-on-surface-variant group-hover:text-primary transition-colors flex-shrink-0">
-                    arrow_forward
-                  </span>
+                  <ArrowRight className="w-4 h-4 text-on-surface-variant group-hover:text-primary transition-colors flex-shrink-0" />
                 </Link>
               ))}
             </div>

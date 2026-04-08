@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import Link from "next/link";
+import Image from "next/image";
+import { X, Link as LinkIcon, Globe, Hourglass, Sparkles, TriangleAlert, Info, PenLine, CircleAlert, ArrowLeft, Save } from "lucide-react";
 
 interface AnalysisResult {
   title: string;
@@ -178,7 +180,7 @@ export default function NewArticlePage() {
           href="/"
           className="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors"
         >
-          <span className="material-symbols-outlined text-lg">close</span>
+          <X className="w-5 h-5" />
           Cancel
         </Link>
       </div>
@@ -186,15 +188,13 @@ export default function NewArticlePage() {
       {/* Step 1: URL Input */}
       <Card variant="low">
         <h2 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">link</span>
+          <LinkIcon className="w-5 h-5 text-primary" />
           {result ? "Source URL" : "Step 1 — Enter Article URL"}
         </h2>
 
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">
-              language
-            </span>
+            <Globe className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
             <input
               type="url"
               value={url}
@@ -212,12 +212,12 @@ export default function NewArticlePage() {
           >
             {analyzing ? (
               <>
-                <span className="material-symbols-outlined text-lg animate-spin">hourglass_empty</span>
+                <Hourglass className="w-5 h-5 animate-spin" />
                 Analyzing...
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined text-lg">auto_awesome</span>
+                <Sparkles className="w-5 h-5" />
                 {result ? "Re-analyze" : "Analyze"}
               </>
             )}
@@ -226,14 +226,14 @@ export default function NewArticlePage() {
 
         {analyzeError && (
           <div className="mt-3 px-4 py-2.5 rounded-lg bg-error/10 border border-error/20 text-error text-xs">
-            <span className="material-symbols-outlined text-sm align-middle mr-1">warning</span>
+            <TriangleAlert className="w-3.5 h-3.5 inline align-middle mr-1" />
             {analyzeError}
           </div>
         )}
 
         {result?.duplicate_warning && (
           <div className="mt-3 px-4 py-2.5 rounded-lg bg-tertiary/10 border border-tertiary/20 text-tertiary text-xs">
-            <span className="material-symbols-outlined text-sm align-middle mr-1">info</span>
+            <Info className="w-3.5 h-3.5 inline align-middle mr-1" />
             This URL has already been analyzed: &ldquo;{result.duplicate_warning.existing_title}&rdquo;
             <Link href={`/article/${result.duplicate_warning.existing_id}`} className="underline ml-1 hover:text-on-surface">
               View existing
@@ -247,7 +247,7 @@ export default function NewArticlePage() {
         <>
           <Card variant="low">
             <h2 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg text-secondary">edit_note</span>
+              <PenLine className="w-5 h-5 text-secondary" />
               Step 2 — Review & Edit
             </h2>
 
@@ -347,7 +347,7 @@ export default function NewArticlePage() {
                       className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-error/10 hover:text-error transition-colors group"
                     >
                       {tag}
-                      <span className="material-symbols-outlined text-xs opacity-50 group-hover:opacity-100">close</span>
+                      <X className="w-3 h-3 opacity-50 group-hover:opacity-100" />
                     </button>
                   ))}
                   {tags.length === 0 && (
@@ -392,11 +392,13 @@ export default function NewArticlePage() {
                     Preview Image
                   </label>
                   <div className="flex items-start gap-3">
-                    <img
+                    <Image
                       src={imageUrl}
                       alt="Article preview"
+                      width={128}
+                      height={80}
                       className="w-32 h-20 object-cover rounded-lg bg-surface-container-high"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      unoptimized
                     />
                     <input
                       type="text"
@@ -413,7 +415,7 @@ export default function NewArticlePage() {
           {/* Save Error */}
           {saveError && (
             <div className="px-4 py-2.5 rounded-lg bg-error/10 border border-error/20 text-error text-xs">
-              <span className="material-symbols-outlined text-sm align-middle mr-1">error</span>
+              <CircleAlert className="w-3.5 h-3.5 inline align-middle mr-1" />
               {saveError}
             </div>
           )}
@@ -424,7 +426,7 @@ export default function NewArticlePage() {
               href="/"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-on-surface-variant hover:text-on-surface transition-colors"
             >
-              <span className="material-symbols-outlined text-lg">arrow_back</span>
+              <ArrowLeft className="w-5 h-5" />
               Cancel
             </Link>
 
@@ -435,12 +437,12 @@ export default function NewArticlePage() {
             >
               {saving ? (
                 <>
-                  <span className="material-symbols-outlined text-lg animate-spin">hourglass_empty</span>
+                  <Hourglass className="w-5 h-5 animate-spin" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-lg">save</span>
+                  <Save className="w-5 h-5" />
                   Save to Feed
                 </>
               )}

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/Badge";
+import { BadgeCheck } from "lucide-react";
 
 interface TargetPaneProps {
   title: string;
@@ -17,7 +18,7 @@ export function TargetPane({ title, content, isVerified }: TargetPaneProps) {
         </div>
         {isVerified && (
           <span className="inline-flex items-center gap-1 text-xs font-semibold text-secondary">
-            <span className="material-symbols-outlined text-sm">verified</span>
+            <BadgeCheck className="w-4 h-4" />
             Verified
           </span>
         )}

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
 import type { ArticleWithTranslation } from "@/lib/types/database";
+import { Hourglass, Sparkles } from "lucide-react";
 
 const reportTypeOptions = [
   { value: "executive", label: "Executive Report" },
@@ -200,9 +201,7 @@ export default function NewReportPage() {
           disabled={!title || selectedIds.size === 0 || generating}
           onClick={handleGenerate}
         >
-          <span className="material-symbols-outlined text-lg">
-            {generating ? "hourglass_empty" : "auto_awesome"}
-          </span>
+          {generating ? <Hourglass className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
           {generating ? "Generating..." : "Generate Report"}
         </Button>
       </div>

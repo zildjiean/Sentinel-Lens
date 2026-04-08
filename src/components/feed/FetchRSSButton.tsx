@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Rss, Hourglass, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export function FetchRSSButton() {
@@ -49,14 +50,12 @@ export function FetchRSSButton() {
         disabled={loading}
         className="gap-2"
       >
-        <span className="material-symbols-outlined text-lg">
-          {loading ? "hourglass_empty" : "rss_feed"}
-        </span>
+        {loading ? <Hourglass className="w-5 h-5" /> : <Rss className="w-5 h-5" />}
         {loading ? "Fetching RSS Feeds..." : "Fetch Latest News"}
       </Button>
       {result && (
         <p className="text-secondary text-xs flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm">check_circle</span>
+          <CheckCircle className="w-4 h-4" />
           {result}
         </p>
       )}

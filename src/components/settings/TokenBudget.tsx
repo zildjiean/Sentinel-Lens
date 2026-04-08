@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Languages, FileText } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/client";
 
@@ -100,7 +101,7 @@ export function TokenBudget() {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="p-3 rounded-lg bg-surface-container-high/30">
           <div className="flex items-center gap-2 mb-1">
-            <span className="material-symbols-outlined text-sm text-tertiary">translate</span>
+            <Languages className="w-4 h-4 text-tertiary" />
             <span className="text-xs text-on-surface-variant">Translation</span>
           </div>
           <p className="font-headline text-lg font-bold text-on-surface">
@@ -109,7 +110,7 @@ export function TokenBudget() {
         </div>
         <div className="p-3 rounded-lg bg-surface-container-high/30">
           <div className="flex items-center gap-2 mb-1">
-            <span className="material-symbols-outlined text-sm text-primary">description</span>
+            <FileText className="w-4 h-4 text-primary" />
             <span className="text-xs text-on-surface-variant">Reports</span>
           </div>
           <p className="font-headline text-lg font-bold text-on-surface">

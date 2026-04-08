@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Languages, Hourglass } from "lucide-react";
 
 interface BatchTranslateButtonProps {
   articleIds: string[];
@@ -50,9 +51,7 @@ export function BatchTranslateButton({ articleIds }: BatchTranslateButtonProps) 
         disabled={translating || articleIds.length === 0}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-medium hover:bg-tertiary/30 transition-colors disabled:opacity-50"
       >
-        <span className="material-symbols-outlined text-lg">
-          {translating ? "hourglass_empty" : "translate"}
-        </span>
+        {translating ? <Hourglass className="w-5 h-5" /> : <Languages className="w-5 h-5" />}
         {translating
           ? `Translating${progress ? ` (${progress.done}/${progress.total})` : "..."}`
           : `Batch Translate (${articleIds.length})`}

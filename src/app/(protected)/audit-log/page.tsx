@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { type LucideIcon, PlusCircle, Trash2, Pencil, Languages, FileText, Rss, LogIn, Download, Hourglass, History, Info } from "lucide-react";
 
 interface AuditEntry {
   id: string;
@@ -14,15 +15,15 @@ interface AuditEntry {
   profiles: { email: string; display_name: string | null } | null;
 }
 
-const ACTION_ICONS: Record<string, string> = {
-  create: "add_circle",
-  delete: "delete",
-  update: "edit",
-  translate: "translate",
-  generate_report: "description",
-  fetch_rss: "rss_feed",
-  login: "login",
-  export: "download",
+const ACTION_ICONS: Record<string, LucideIcon> = {
+  create: PlusCircle,
+  delete: Trash2,
+  update: Pencil,
+  translate: Languages,
+  generate_report: FileText,
+  fetch_rss: Rss,
+  login: LogIn,
+  export: Download,
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -72,13 +73,13 @@ export default function AuditLogPage() {
 
       {loading ? (
         <div className="flex items-center justify-center h-40 text-on-surface-variant">
-          <span className="material-symbols-outlined animate-spin mr-2">hourglass_empty</span>
+          <Hourglass className="w-5 h-5 animate-spin mr-2" />
           Loading...
         </div>
       ) : logs.length === 0 ? (
         <Card variant="low">
           <div className="flex flex-col items-center justify-center py-12 text-on-surface-variant">
-            <span className="material-symbols-outlined text-4xl mb-3">history</span>
+            <History className="w-10 h-10 mb-3" />
             <p className="text-sm">No audit logs recorded yet.</p>
           </div>
         </Card>
@@ -88,9 +89,10 @@ export default function AuditLogPage() {
             {logs.map((log) => (
               <div key={log.id} className="flex items-start gap-4 py-3 first:pt-0 last:pb-0">
                 <div className={`mt-0.5 ${ACTION_COLORS[log.action] || "text-on-surface-variant"}`}>
-                  <span className="material-symbols-outlined text-xl">
-                    {ACTION_ICONS[log.action] || "info"}
-                  </span>
+                  {(() => {
+                    const Icon = ACTION_ICONS[log.action] || Info;
+                    return <Icon className="w-5 h-5" />;
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

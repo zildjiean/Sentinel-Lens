@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import "@fontsource/manrope/400.css";
 import "@fontsource/manrope/600.css";
 import "@fontsource/manrope/700.css";
@@ -16,19 +17,17 @@ export const metadata: Metadata = {
     "Bilingual cybersecurity intelligence platform with real-time threat monitoring and analysis",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("sentinel-theme")?.value === "light" ? "light" : "dark";
+
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
-        />
-      </head>
+    <html lang="en" className={theme} suppressHydrationWarning>
+      <head />
       <body className="bg-surface text-on-surface font-body antialiased">
         <ThemeProvider>{children}</ThemeProvider>
       </body>

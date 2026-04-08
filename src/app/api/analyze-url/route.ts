@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+
+const analyzeUrlSchema = z.object({
+  url: z.string().url().max(2048),
+});
 
 const ANALYSIS_PROMPT = `You are a cybersecurity threat intelligence analyst. Analyze the following article content and provide a structured JSON response.
 
@@ -182,14 +187,44 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden. Analyst or Admin role required." }, { status: 403 });
   }
 
-  const { url } = await request.json();
-  if (!url || typeof url !== "string") {
-    return NextResponse.json({ error: "URL is required" }, { status: 400 });
+  const parseResult = analyzeUrlSchema.safeParse(await request.json());
+  if (!parseResult.success) {
+    return NextResponse.json({ error: "Invalid URL", details: parseResult.error.flatten() }, { status: 400 });
+  }
+  const { url } = parseResult.data;
+
+  // Validate URL format and apply SSRF protection
+  let parsedUrl: URL;
+  try { parsedUrl = new URL(url); } catch {
+    return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
   }
 
-  // Validate URL format
-  try { new URL(url); } catch {
-    return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+  // Only allow HTTP(S) schemes
+  if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+    return NextResponse.json({ error: "Only HTTP and HTTPS URLs are allowed" }, { status: 400 });
+  }
+
+  // Block private/internal IPs and localhost
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const blockedPatterns = [
+    /^localhost$/,
+    /^127\./,
+    /^10\./,
+    /^172\.(1[6-9]|2[0-9]|3[01])\./,
+    /^192\.168\./,
+    /^0\./,
+    /^169\.254\./,       // Link-local
+    /^::1$/,             // IPv6 loopback
+    /^fc00:/i,           // IPv6 ULA
+    /^fe80:/i,           // IPv6 link-local
+    /^\[::1\]$/,
+    /^metadata\./,       // Cloud metadata
+    /\.internal$/,
+    /\.local$/,
+  ];
+
+  if (blockedPatterns.some((p) => p.test(hostname))) {
+    return NextResponse.json({ error: "URLs pointing to internal or private addresses are not allowed" }, { status: 400 });
   }
 
   // Check for duplicate URL

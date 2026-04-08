@@ -1,5 +1,18 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+
+const articleSchema = z.object({
+  title: z.string().min(1).max(500),
+  content: z.string().min(1).max(50000),
+  excerpt: z.string().max(1000).optional().default(""),
+  severity: z.enum(["critical", "high", "medium", "low", "info"]),
+  tags: z.array(z.string().max(50)).max(10).optional().default([]),
+  author: z.string().max(200).nullable().optional(),
+  url: z.string().url().max(2048).nullable().optional(),
+  image_url: z.string().url().max(2048).nullable().optional(),
+});
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -17,19 +30,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden. Analyst or Admin role required." }, { status: 403 });
   }
 
-  const body = await request.json();
-  const { title, content, excerpt, severity, tags, author, url, image_url } = body;
-
-  // Validate required fields
-  if (!title?.trim()) {
-    return NextResponse.json({ error: "Title is required" }, { status: 400 });
+  const parseResult = articleSchema.safeParse(await request.json());
+  if (!parseResult.success) {
+    return NextResponse.json({ error: "Invalid request", details: parseResult.error.flatten() }, { status: 400 });
   }
-  if (!content?.trim()) {
-    return NextResponse.json({ error: "Content is required" }, { status: 400 });
-  }
-  if (!["critical", "high", "medium", "low", "info"].includes(severity)) {
-    return NextResponse.json({ error: "Invalid severity level" }, { status: 400 });
-  }
+  const { title, content, excerpt, severity, tags, author, url, image_url } = parseResult.data;
 
   // Insert article
   const { data: article, error } = await supabase
@@ -37,10 +42,10 @@ export async function POST(request: Request) {
     .insert({
       title: title.trim(),
       content: content.trim(),
-      excerpt: (excerpt || "").trim() || content.trim().substring(0, 200),
+      excerpt: excerpt.trim() || content.trim().substring(0, 200),
       severity,
       status: "new",
-      tags: Array.isArray(tags) ? tags : [],
+      tags,
       author: author?.trim() || null,
       url: url?.trim() || null,
       image_url: image_url?.trim() || null,
@@ -64,6 +69,9 @@ export async function POST(request: Request) {
     entity_id: article.id,
     details: { title: title.trim(), severity, is_manual: true },
   }).then(() => {});
+
+  // Trigger revalidation for feed page
+  revalidatePath("/");
 
   return NextResponse.json({ success: true, article_id: article.id });
 }

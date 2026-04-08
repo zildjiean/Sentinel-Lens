@@ -1,8 +1,9 @@
-import { SelectHTMLAttributes, forwardRef } from "react";
+import { SelectHTMLAttributes, forwardRef, ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string; label: string }[];
-  icon?: string;
+  icon?: ReactNode;
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
@@ -10,7 +11,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="relative">
         {icon && (
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">{icon}</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">{icon}</span>
         )}
         <select
           ref={ref}
@@ -21,7 +22,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg pointer-events-none">expand_more</span>
+        <ChevronDown className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
       </div>
     );
   }

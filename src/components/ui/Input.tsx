@@ -1,7 +1,7 @@
-import { InputHTMLAttributes, forwardRef } from "react";
+import { InputHTMLAttributes, forwardRef, ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  icon?: string;
+  icon?: ReactNode;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -9,7 +9,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {icon && (
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">{icon}</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">{icon}</span>
         )}
         <input
           ref={ref}

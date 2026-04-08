@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Download, Hourglass, Table, Braces, Shield } from "lucide-react";
 
 export function ExportButton() {
   const [open, setOpen] = useState(false);
@@ -40,9 +41,7 @@ export function ExportButton() {
         disabled={exporting}
         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-50"
       >
-        <span className="material-symbols-outlined text-sm">
-          {exporting ? "hourglass_empty" : "download"}
-        </span>
+        {exporting ? <Hourglass className="w-4 h-4" /> : <Download className="w-4 h-4" />}
         {exporting ? "Exporting..." : "Export"}
       </button>
 
@@ -52,21 +51,21 @@ export function ExportButton() {
             onClick={() => handleExport("csv")}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container-high transition-colors"
           >
-            <span className="material-symbols-outlined text-sm text-secondary">table_chart</span>
+            <Table className="w-4 h-4 text-secondary" />
             Export as CSV
           </button>
           <button
             onClick={() => handleExport("json")}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container-high transition-colors"
           >
-            <span className="material-symbols-outlined text-sm text-primary">data_object</span>
+            <Braces className="w-4 h-4 text-primary" />
             Export as JSON
           </button>
           <button
             onClick={() => handleExport("stix")}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container-high transition-colors"
           >
-            <span className="material-symbols-outlined text-sm text-tertiary">security</span>
+            <Shield className="w-4 h-4 text-tertiary" />
             Export as STIX 2.1
           </button>
         </div>

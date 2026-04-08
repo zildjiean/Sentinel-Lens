@@ -1,6 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import {
+  Bell,
+  TriangleAlert,
+  FileText as ArticleIcon,
+  Languages,
+  FileText,
+  Info,
+  type LucideIcon,
+} from "lucide-react";
 
 interface Notification {
   id: string;
@@ -13,12 +22,12 @@ interface Notification {
   created_at: string;
 }
 
-const TYPE_ICONS: Record<string, string> = {
-  critical_threat: "warning",
-  new_article: "article",
-  translation_done: "translate",
-  report_generated: "description",
-  system: "info",
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  critical_threat: TriangleAlert,
+  new_article: ArticleIcon,
+  translation_done: Languages,
+  report_generated: FileText,
+  system: Info,
 };
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -94,12 +103,13 @@ export function NotificationBell() {
   return (
     <div ref={ref} className="relative">
       <button
+        aria-label="Notifications"
         onClick={() => setOpen(!open)}
         className="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
       >
-        <span className="material-symbols-outlined text-xl">notifications</span>
+        <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 min-w-[18px] flex items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
+          <span aria-live="polite" className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 min-w-[18px] flex items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -132,9 +142,10 @@ export function NotificationBell() {
                     !n.is_read ? "bg-primary/5" : ""
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-lg mt-0.5 ${SEVERITY_COLORS[n.severity || ""] || "text-on-surface-variant"}`}>
-                    {TYPE_ICONS[n.type] || "info"}
-                  </span>
+                  {(() => {
+                    const IconComp = TYPE_ICONS[n.type] || Info;
+                    return <IconComp className={`w-5 h-5 mt-0.5 ${SEVERITY_COLORS[n.severity || ""] || "text-on-surface-variant"}`} />;
+                  })()}
                   <div className="flex-1 min-w-0">
                     <p className={`text-xs font-medium ${!n.is_read ? "text-on-surface" : "text-on-surface-variant"}`}>
                       {n.title}

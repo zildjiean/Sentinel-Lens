@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { z } from "zod";
+
+const chatSchema = z.object({
+  message: z.string().min(1).max(2000),
+  history: z.array(z.object({
+    role: z.enum(["user", "assistant"]),
+    content: z.string(),
+  })).max(10).optional().default([]),
+});
 
 const SYSTEM_PROMPT = `You are Sentinel Lens AI — a cybersecurity intelligence assistant embedded in a threat intelligence platform.
 
@@ -15,26 +25,45 @@ Response format rules:
 - For technical terms, keep them in English even when responding in Thai.
 - If you're unsure, say so rather than making things up.`;
 
-async function searchArticles(supabase: ReturnType<typeof Object>, query: string) {
-  // Search by keyword matching in title, content, tags
+// Sanitize keywords to prevent PostgREST filter injection
+function sanitizeKeyword(keyword: string): string {
+  // Remove PostgREST special characters that could alter filter logic
+  return keyword.replace(/[.,()%\\]/g, "").trim();
+}
+
+async function searchArticles(supabase: SupabaseClient, query: string) {
   const keywords = query
     .toLowerCase()
     .split(/\s+/)
+    .map(sanitizeKeyword)
     .filter((w) => w.length > 2)
     .slice(0, 5);
 
   if (keywords.length === 0) return [];
 
-  // Use ilike for flexible matching on title and content
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: articles } = await (supabase as any)
+  // Use Supabase full-text search if available, fallback to ilike
+  // Try textSearch first (requires tsvector column)
+  const tsQuery = keywords.join(" & ");
+  const { data: ftsArticles, error: ftsError } = await supabase
     .from("articles")
     .select("id, title, severity, excerpt, published_at, tags")
-    .or(
-      keywords
-        .map((kw: string) => `title.ilike.%${kw}%,excerpt.ilike.%${kw}%,content.ilike.%${kw}%`)
-        .join(",")
-    )
+    .textSearch("title", tsQuery, { type: "websearch" })
+    .order("published_at", { ascending: false })
+    .limit(5);
+
+  if (!ftsError && ftsArticles && ftsArticles.length > 0) {
+    return ftsArticles;
+  }
+
+  // Fallback: search title and excerpt only (skip content for performance)
+  const orFilter = keywords
+    .map((kw: string) => `title.ilike.%${kw}%,excerpt.ilike.%${kw}%`)
+    .join(",");
+
+  const { data: articles } = await supabase
+    .from("articles")
+    .select("id, title, severity, excerpt, published_at, tags")
+    .or(orFilter)
     .order("published_at", { ascending: false })
     .limit(5);
 
@@ -98,10 +127,11 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { message, history } = await request.json();
-  if (!message?.trim()) {
-    return NextResponse.json({ error: "Message is required" }, { status: 400 });
+  const parseResult = chatSchema.safeParse(await request.json());
+  if (!parseResult.success) {
+    return NextResponse.json({ error: "Invalid request", details: parseResult.error.flatten() }, { status: 400 });
   }
+  const { message, history: validatedHistory } = parseResult.data;
 
   // Step 1: Search platform articles
   const articles = await searchArticles(supabase, message);
@@ -150,8 +180,8 @@ export async function POST(request: Request) {
   // Step 4: Build conversation
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
-    // Include recent history (max 10 messages)
-    ...(history || []).slice(-10),
+    // Include validated history (max 10 messages)
+    ...validatedHistory,
     {
       role: "user",
       content: articleContext

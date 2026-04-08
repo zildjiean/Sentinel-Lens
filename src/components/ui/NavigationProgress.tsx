@@ -1,15 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export function NavigationProgress() {
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Clear any pending progress timeouts
+  function clearPendingTimeouts() {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+  }
 
   useEffect(() => {
-    // When pathname changes, the navigation is complete
+    // When pathname changes, the navigation is complete — clear animation timeouts
+    clearPendingTimeouts();
     setLoading(false);
     setProgress(100);
     const timer = setTimeout(() => setProgress(0), 300);
@@ -23,16 +31,20 @@ export function NavigationProgress() {
       if (!target) return;
       const href = target.getAttribute("href");
       if (!href || href.startsWith("#") || href.startsWith("http") || href === pathname) return;
+      clearPendingTimeouts();
       setLoading(true);
       setProgress(30);
-      // Animate progress
+      // Animate progress — store timeout IDs for cleanup
       const t1 = setTimeout(() => setProgress(60), 200);
       const t2 = setTimeout(() => setProgress(80), 600);
-      return () => { clearTimeout(t1); clearTimeout(t2); };
+      timeoutsRef.current.push(t1, t2);
     }
 
     document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
+    return () => {
+      document.removeEventListener("click", handleClick);
+      clearPendingTimeouts();
+    };
   }, [pathname]);
 
   if (progress === 0) return null;

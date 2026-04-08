@@ -6,12 +6,13 @@ import { RSSManager } from "@/components/settings/RSSManager";
 import { UserManager } from "@/components/settings/UserManager";
 import { ReportTemplates } from "@/components/settings/ReportTemplates";
 import { TokenBudget } from "@/components/settings/TokenBudget";
+import { type LucideIcon, Bot, Rss, FileText, Users } from "lucide-react";
 
-const tabs = [
-  { id: "llm", label: "LLM Provider", icon: "smart_toy", description: "API keys, model selection, and token budget" },
-  { id: "rss", label: "RSS Sources", icon: "rss_feed", description: "Manage news feeds and fetch schedule" },
-  { id: "reports", label: "Report Templates", icon: "description", description: "Customize report generation prompts" },
-  { id: "users", label: "User Management", icon: "group", description: "Create users and assign roles" },
+const tabs: { id: string; label: string; icon: LucideIcon; description: string }[] = [
+  { id: "llm", label: "LLM Provider", icon: Bot, description: "API keys, model selection, and token budget" },
+  { id: "rss", label: "RSS Sources", icon: Rss, description: "Manage news feeds and fetch schedule" },
+  { id: "reports", label: "Report Templates", icon: FileText, description: "Customize report generation prompts" },
+  { id: "users", label: "User Management", icon: Users, description: "Create users and assign roles" },
 ];
 
 export default function SettingsPage() {
@@ -43,11 +44,9 @@ export default function SettingsPage() {
                     : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface border border-transparent"
                 }`}
               >
-                <span className={`material-symbols-outlined text-xl flex-shrink-0 ${
+                <tab.icon className={`w-5 h-5 flex-shrink-0 ${
                   activeTab === tab.id ? "text-primary" : "text-on-surface-variant"
-                }`}>
-                  {tab.icon}
-                </span>
+                }`} />
                 <div className="hidden lg:block">
                   <p className="text-sm font-medium">{tab.label}</p>
                   <p className="text-[10px] text-on-surface-variant/70 mt-0.5 leading-tight">
@@ -64,9 +63,10 @@ export default function SettingsPage() {
         <div className="flex-1 min-w-0 space-y-6">
           {/* Tab indicator for mobile */}
           <div className="lg:hidden flex items-center gap-2 text-on-surface-variant mb-2">
-            <span className="material-symbols-outlined text-lg text-primary">
-              {tabs.find((t) => t.id === activeTab)?.icon}
-            </span>
+            {(() => {
+              const ActiveIcon = tabs.find((t) => t.id === activeTab)?.icon;
+              return ActiveIcon ? <ActiveIcon className="w-5 h-5 text-primary" /> : null;
+            })()}
             <span className="text-xs text-on-surface-variant/70">
               {tabs.find((t) => t.id === activeTab)?.description}
             </span>

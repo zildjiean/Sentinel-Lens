@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Clock, Hourglass, Rss, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -120,7 +121,7 @@ export function RSSManager() {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-sm font-semibold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg text-primary">schedule</span>
+              <Clock className="w-5 h-5 text-primary" />
               Fetch Schedule
             </h3>
             <p className="text-xs text-on-surface-variant mt-0.5">
@@ -133,9 +134,7 @@ export function RSSManager() {
             onClick={handleFetchNow}
             disabled={fetching}
           >
-            <span className="material-symbols-outlined text-sm">
-              {fetching ? "hourglass_empty" : "rss_feed"}
-            </span>
+            {fetching ? <Hourglass className="w-4 h-4" /> : <Rss className="w-4 h-4" />}
             {fetching ? "Fetching..." : "Fetch Now"}
           </Button>
         </div>
@@ -214,7 +213,7 @@ export function RSSManager() {
               onClick={() => handleDelete(source.id)}
               className="text-on-surface-variant hover:text-error transition-colors"
             >
-              <span className="material-symbols-outlined text-lg">delete</span>
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
         ))}

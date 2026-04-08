@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { type LucideIcon, CheckCircle, TriangleAlert, CircleAlert, CloudOff, HelpCircle, RefreshCw, Activity, Rss, FileText, Languages } from "lucide-react";
 
 interface HealthData {
   status: string;
@@ -20,13 +21,13 @@ const STATUS_COLORS: Record<string, string> = {
   not_configured: "text-tertiary",
 };
 
-const STATUS_ICONS: Record<string, string> = {
-  healthy: "check_circle",
-  configured: "check_circle",
-  degraded: "warning",
-  error: "error",
-  unreachable: "cloud_off",
-  not_configured: "help",
+const STATUS_ICONS: Record<string, LucideIcon> = {
+  healthy: CheckCircle,
+  configured: CheckCircle,
+  degraded: TriangleAlert,
+  error: CircleAlert,
+  unreachable: CloudOff,
+  not_configured: HelpCircle,
 };
 
 export default function SystemHealthPage() {
@@ -65,9 +66,7 @@ export default function SystemHealthPage() {
           disabled={loading}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface text-sm font-medium transition-colors disabled:opacity-50"
         >
-          <span className={`material-symbols-outlined text-lg ${loading ? "animate-spin" : ""}`}>
-            refresh
-          </span>
+          <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           {loading ? "Checking..." : "Refresh"}
         </button>
       </div>
@@ -79,9 +78,10 @@ export default function SystemHealthPage() {
             health.status === "healthy" ? "border-secondary" : "border-tertiary"
           }`}>
             <div className="flex items-center gap-4">
-              <span className={`material-symbols-outlined text-3xl ${STATUS_COLORS[health.status]}`}>
-                {STATUS_ICONS[health.status]}
-              </span>
+              {(() => {
+                const StatusIcon = STATUS_ICONS[health.status] || HelpCircle;
+                return <StatusIcon className={`w-8 h-8 ${STATUS_COLORS[health.status]}`} />;
+              })()}
               <div>
                 <h2 className="font-headline text-xl font-bold text-on-surface capitalize">
                   System {health.status}
@@ -95,14 +95,14 @@ export default function SystemHealthPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
-            {[
-              { label: "Articles", value: health.stats.articles, icon: "article" },
-              { label: "Translations", value: health.stats.translations, icon: "translate" },
-              { label: "Reports", value: health.stats.reports, icon: "description" },
-            ].map((s) => (
+            {([
+              { label: "Articles", value: health.stats.articles, icon: FileText },
+              { label: "Translations", value: health.stats.translations, icon: Languages },
+              { label: "Reports", value: health.stats.reports, icon: FileText },
+            ] as { label: string; value: number; icon: LucideIcon }[]).map((s) => (
               <Card key={s.label} variant="low">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-xl text-primary">{s.icon}</span>
+                  <s.icon className="w-5 h-5 text-primary" />
                   <div>
                     <p className="font-headline text-2xl font-bold text-on-surface">{s.value}</p>
                     <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{s.label}</p>
@@ -115,16 +115,17 @@ export default function SystemHealthPage() {
           {/* Component Checks */}
           <Card variant="low">
             <h3 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg text-primary">monitoring</span>
+              <Activity className="w-5 h-5 text-primary" />
               Component Status
             </h3>
             <div className="divide-y divide-outline-variant/10">
               {Object.entries(health.checks).map(([name, check]) => (
                 <div key={name} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    <span className={`material-symbols-outlined text-lg ${STATUS_COLORS[check.status]}`}>
-                      {STATUS_ICONS[check.status] || "info"}
-                    </span>
+                    {(() => {
+                      const Icon = STATUS_ICONS[check.status] || HelpCircle;
+                      return <Icon className={`w-5 h-5 ${STATUS_COLORS[check.status]}`} />;
+                    })()}
                     <div>
                       <p className="text-sm font-medium text-on-surface capitalize">
                         {name.replace(/_/g, " ")}
@@ -143,16 +144,17 @@ export default function SystemHealthPage() {
           {/* RSS Source Status */}
           <Card variant="low">
             <h3 className="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg text-secondary">rss_feed</span>
+              <Rss className="w-5 h-5 text-secondary" />
               RSS Source Connectivity
             </h3>
             <div className="divide-y divide-outline-variant/10">
               {health.sources.map((source) => (
                 <div key={source.name} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    <span className={`material-symbols-outlined text-lg ${STATUS_COLORS[source.status] || "text-on-surface-variant"}`}>
-                      {source.status === "healthy" ? "check_circle" : "error"}
-                    </span>
+                    {(() => {
+                      const Icon = source.status === "healthy" ? CheckCircle : CircleAlert;
+                      return <Icon className={`w-5 h-5 ${STATUS_COLORS[source.status] || "text-on-surface-variant"}`} />;
+                    })()}
                     <div>
                       <p className="text-sm font-medium text-on-surface">{source.name}</p>
                       <p className="text-xs text-on-surface-variant">

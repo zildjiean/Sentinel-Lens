@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { Languages } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { ArticleWithTranslation } from "@/lib/types/database";
@@ -64,7 +65,7 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
 
         {article.translations && (
           <button className="text-[10px] uppercase tracking-widest text-primary hover:text-secondary transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">translate</span>
+            <Languages className="w-4 h-4" />
             TH
           </button>
         )}

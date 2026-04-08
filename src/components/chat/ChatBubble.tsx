@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { FileText, Bot, X, ListX, Sparkles, ArrowUpRight, Send } from "lucide-react";
+
+const MAX_CHAT_MESSAGES = 50;
 
 interface Message {
   role: "user" | "assistant";
@@ -17,6 +20,31 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: "bg-surface-container-high text-on-surface-variant",
 };
 
+// Safe text rendering — converts **bold** and \n to React elements without dangerouslySetInnerHTML
+function renderSafeText(text: string, keyPrefix: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  // Split by newlines first
+  const lines = text.split("\n");
+
+  lines.forEach((line, lineIdx) => {
+    if (lineIdx > 0) {
+      nodes.push(<br key={`${keyPrefix}-br-${lineIdx}`} />);
+    }
+    // Split by bold markers **...**
+    const boldParts = line.split(/\*\*([^*]+)\*\*/g);
+    boldParts.forEach((part, partIdx) => {
+      if (partIdx % 2 === 1) {
+        // Bold text
+        nodes.push(<strong key={`${keyPrefix}-b-${lineIdx}-${partIdx}`}>{part}</strong>);
+      } else if (part) {
+        nodes.push(<React.Fragment key={`${keyPrefix}-t-${lineIdx}-${partIdx}`}>{part}</React.Fragment>);
+      }
+    });
+  });
+
+  return nodes;
+}
+
 function parseArticleLinks(text: string): React.ReactNode[] {
   // Convert [ARTICLE:id:title] to clickable links
   const parts = text.split(/\[ARTICLE:([^:]+):([^\]]+)\]/g);
@@ -24,15 +52,9 @@ function parseArticleLinks(text: string): React.ReactNode[] {
 
   for (let i = 0; i < parts.length; i++) {
     if (i % 3 === 0) {
-      // Regular text — convert markdown-like formatting
+      // Regular text — safe rendering without dangerouslySetInnerHTML
       if (parts[i]) {
-        nodes.push(
-          <span key={i} dangerouslySetInnerHTML={{
-            __html: parts[i]
-              .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-              .replace(/\n/g, "<br/>")
-          }} />
-        );
+        nodes.push(...renderSafeText(parts[i], `text-${i}`));
       }
     } else if (i % 3 === 1) {
       // Article ID
@@ -44,7 +66,7 @@ function parseArticleLinks(text: string): React.ReactNode[] {
           href={`/article/${id}`}
           className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors mx-0.5"
         >
-          <span className="material-symbols-outlined text-xs">article</span>
+          <FileText className="w-3 h-3" />
           {title}
         </Link>
       );
@@ -96,28 +118,28 @@ export function ChatBubble() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessages((prev) => [
+        setMessages((prev) => ([
           ...prev,
           {
-            role: "assistant",
+            role: "assistant" as const,
             content: data.reply,
             articles: data.articles,
           },
-        ]);
+        ] as Message[]).slice(-MAX_CHAT_MESSAGES));
       } else {
-        setMessages((prev) => [
+        setMessages((prev) => ([
           ...prev,
           {
-            role: "assistant",
+            role: "assistant" as const,
             content: data.error || "Sorry, something went wrong. Please try again.",
           },
-        ]);
+        ] as Message[]).slice(-MAX_CHAT_MESSAGES));
       }
     } catch {
-      setMessages((prev) => [
+      setMessages((prev) => ([
         ...prev,
-        { role: "assistant", content: "Network error. Please check your connection." },
-      ]);
+        { role: "assistant" as const, content: "Network error. Please check your connection." },
+      ] as Message[]).slice(-MAX_CHAT_MESSAGES));
     } finally {
       setLoading(false);
     }
@@ -132,7 +154,7 @@ export function ChatBubble() {
           <div className="flex items-center justify-between px-4 py-3 bg-surface-container-low border-b border-outline-variant/10">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-lg">smart_toy</span>
+                <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-on-surface">Sentinel AI</h3>
@@ -145,13 +167,13 @@ export function ChatBubble() {
                 className="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
                 title="Clear chat"
               >
-                <span className="material-symbols-outlined text-sm">delete_sweep</span>
+                <ListX className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setOpen(false)}
                 className="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
               >
-                <span className="material-symbols-outlined text-sm">close</span>
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -161,7 +183,7 @@ export function ChatBubble() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-2xl">auto_awesome</span>
+                  <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-on-surface">How can I help?</p>
@@ -216,7 +238,7 @@ export function ChatBubble() {
                                 SEVERITY_COLORS[a.severity] || SEVERITY_COLORS.info
                               }`}
                             >
-                              <span className="material-symbols-outlined text-[10px]">arrow_outward</span>
+                              <ArrowUpRight className="w-2.5 h-2.5" />
                               {a.title.length > 30 ? a.title.slice(0, 30) + "..." : a.title}
                             </Link>
                           ))}
@@ -264,7 +286,7 @@ export function ChatBubble() {
                 disabled={loading || !input.trim()}
                 className="w-9 h-9 rounded-xl bg-primary text-[#263046] flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-30"
               >
-                <span className="material-symbols-outlined text-lg">send</span>
+                <Send className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -280,9 +302,7 @@ export function ChatBubble() {
             : "bg-secondary text-[#263046]"
         }`}
       >
-        <span className="material-symbols-outlined text-2xl">
-          {open ? "close" : "auto_awesome"}
-        </span>
+        {open ? <X className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
       </button>
     </>
   );
