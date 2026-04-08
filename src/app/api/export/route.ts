@@ -14,7 +14,8 @@ export async function GET(request: Request) {
   let query = supabase
     .from("articles")
     .select("id, title, severity, status, author, url, published_at, tags, excerpt, content")
-    .order("published_at", { ascending: false });
+    .order("published_at", { ascending: false })
+    .limit(2000);
 
   if (severity) query = query.eq("severity", severity);
   if (days) {

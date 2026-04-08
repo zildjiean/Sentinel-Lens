@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { FeedFilter } from "@/components/feed/FeedFilter";
 import { ArticleGrid } from "@/components/feed/ArticleGrid";
 import { FetchRSSButton } from "@/components/feed/FetchRSSButton";
@@ -18,21 +18,31 @@ export function FilteredFeed({ articles }: FilteredFeedProps) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
+  // Reset page when filters change (NOT inside useMemo to avoid render loop)
+  const prevFilters = useRef({ severity, days, search });
+  useEffect(() => {
+    const prev = prevFilters.current;
+    if (prev.severity !== severity || prev.days !== days || prev.search !== search) {
+      setPage(1);
+      prevFilters.current = { severity, days, search };
+    }
+  }, [severity, days, search]);
+
   const filtered = useMemo(() => {
-    setPage(1);
+    const searchLower = search.toLowerCase();
     return articles.filter((a) => {
-      const matchSeverity = !severity || a.severity === severity;
-      let matchDate = true;
+      if (severity && a.severity !== severity) return false;
       if (days !== null) {
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - days);
-        matchDate = new Date(a.published_at) >= cutoff;
+        if (new Date(a.published_at) < cutoff) return false;
       }
-      const matchSearch = !search ||
-        a.title.toLowerCase().includes(search.toLowerCase()) ||
-        a.excerpt.toLowerCase().includes(search.toLowerCase()) ||
-        a.tags?.some(t => t.toLowerCase().includes(search.toLowerCase()));
-      return matchSeverity && matchDate && matchSearch;
+      if (searchLower &&
+        !a.title.toLowerCase().includes(searchLower) &&
+        !a.excerpt.toLowerCase().includes(searchLower) &&
+        !a.tags?.some(t => t.toLowerCase().includes(searchLower))
+      ) return false;
+      return true;
     });
   }, [articles, severity, days, search]);
 

@@ -1,14 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 
+export const revalidate = 300; // Cache for 5 minutes
+
 export default async function AnalyticsPage() {
   const supabase = await createClient();
 
-  // Get all articles for analytics
+  // Limit to last 1000 articles for performance
   const { data: articles } = await supabase
     .from("articles")
-    .select("id, severity, status, published_at, source_id, created_at")
-    .order("published_at", { ascending: false });
+    .select("id, severity, status, published_at, source_id")
+    .order("published_at", { ascending: false })
+    .limit(1000);
 
   // Get sources for mapping
   const { data: sources } = await supabase

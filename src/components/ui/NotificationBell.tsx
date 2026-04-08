@@ -34,7 +34,11 @@ export function NotificationBell() {
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     async function load() {
+      // Only fetch when tab is visible
+      if (document.hidden) return;
       try {
         const res = await fetch("/api/notifications");
         if (res.ok) {
@@ -43,9 +47,20 @@ export function NotificationBell() {
         }
       } catch { /* ignore - user might not be logged in */ }
     }
+
     load();
-    const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
+    // Poll every 60s instead of 30s, and only when tab is visible
+    interval = setInterval(load, 60000);
+
+    function handleVisibility() {
+      if (!document.hidden) load();
+    }
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      if (interval) clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   useEffect(() => {

@@ -7,6 +7,8 @@ import { BookmarkButton } from "@/components/feed/BookmarkButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+export const revalidate = 60; // Cache for 1 minute
+
 export default async function ArticleDetailPage({
   params,
 }: {
@@ -15,19 +17,24 @@ export default async function ArticleDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: article } = await supabase
-    .from("articles")
-    .select("*, translations(*), rss_sources(name)")
-    .eq("id", id)
-    .single();
+  // Parallelize article fetch + auth check for faster loading
+  const [articleResult, authResult] = await Promise.all([
+    supabase
+      .from("articles")
+      .select("*, translations(*), rss_sources(name)")
+      .eq("id", id)
+      .single(),
+    supabase.auth.getUser(),
+  ]);
 
+  const article = articleResult.data;
   if (!article) {
     notFound();
   }
 
-  // Check if current user is admin (for delete button)
+  // Check admin role (only if logged in)
   let isAdmin = false;
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = authResult.data?.user;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
