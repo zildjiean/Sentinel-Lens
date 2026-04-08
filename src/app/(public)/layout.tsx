@@ -6,7 +6,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <div className="min-h-screen bg-surface">
       <Sidebar />
       <TopBar />
-      <main className="ml-64 pt-24 px-8 pb-12">{children}</main>
+      <main className="ml-0 lg:ml-64 pt-24 px-4 lg:px-8 pb-12">{children}</main>
     </div>
   );
 }

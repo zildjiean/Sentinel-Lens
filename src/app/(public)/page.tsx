@@ -12,7 +12,7 @@ export default async function IntelligenceFeedPage() {
     .from("articles")
     .select("*, translations(*)")
     .order("published_at", { ascending: false })
-    .limit(12);
+    .limit(50);
 
   const articles: ArticleWithTranslation[] = (rawArticles ?? []).map(
     (a: Record<string, unknown>) => ({

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { TranslateButton } from "@/components/feed/TranslateButton";
 import { DeleteArticleButton } from "@/components/feed/DeleteArticleButton";
+import { BookmarkButton } from "@/components/feed/BookmarkButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -97,6 +98,7 @@ export default async function ArticleDetailPage({
           <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
           Download PDF Report
         </a>
+        <BookmarkButton articleId={article.id} />
         {isAdmin && (
           <DeleteArticleButton articleId={article.id} articleTitle={article.title} />
         )}
