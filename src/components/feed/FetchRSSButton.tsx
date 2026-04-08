@@ -30,7 +30,7 @@ export function FetchRSSButton() {
       }
 
       setResult(
-        `Fetched ${data.new_articles} new articles from ${data.sources_processed} sources. ${data.skipped_duplicates} duplicates skipped.${data.errors ? ` Errors: ${data.errors.length}` : ""}`
+        `Fetched ${data.new_articles} new articles from ${data.sources_processed} sources. ${data.skipped_duplicates} duplicates skipped.${data.ads_filtered ? ` ${data.ads_filtered} ads filtered.` : ""}${data.errors ? ` Errors: ${data.errors.length}` : ""}`
       );
       router.refresh();
     } catch {

@@ -7,6 +7,61 @@ const SEVERITY_KEYWORDS: Record<string, string[]> = {
   medium: ["patch", "update", "advisory", "security update", "disclosure"],
 };
 
+// Ad/spam content filter — reject promotional or non-cybersecurity content
+const AD_PATTERNS = [
+  /sponsored\s*(content|post|by)/i,
+  /\bad(vertisement|vertorial)\b/i,
+  /\bpromotion(al)?\b/i,
+  /\bbuy\s+now\b/i,
+  /\bfree\s+trial\b/i,
+  /\bsubscribe\s+(now|today)\b/i,
+  /\bdownload\s+(our|the|free)\s+(e-?book|whitepaper|guide)\b/i,
+  /\bsign\s+up\s+for\s+(our|the|a|free)\b/i,
+  /\bdiscount\s+(code|offer)\b/i,
+  /\bcoupon\b/i,
+  /\bpromo\s*code\b/i,
+  /\blimited\s+time\s+offer\b/i,
+  /\bspecial\s+offer\b/i,
+  /\baffiliate\b/i,
+  /\bwebinar\s+registration\b/i,
+  /\bjoin\s+(our|the)\s+newsletter\b/i,
+  /\bpress\s+release\b/i,
+  /\bpartner\s+content\b/i,
+];
+
+const CYBERSEC_KEYWORDS = [
+  "vulnerability", "exploit", "malware", "ransomware", "phishing",
+  "breach", "hack", "threat", "security", "cve-", "zero-day",
+  "patch", "cyber", "attack", "backdoor", "trojan", "apt",
+  "encryption", "firewall", "incident", "forensic", "credential",
+  "botnet", "ddos", "spyware", "rootkit", "privilege escalation",
+  "authentication", "authorization", "injection", "xss", "csrf",
+];
+
+function isAdContent(title: string, content: string): boolean {
+  const combined = `${title} ${content}`;
+
+  // Check for ad patterns
+  const adScore = AD_PATTERNS.reduce((score, pattern) => {
+    return score + (pattern.test(combined) ? 1 : 0);
+  }, 0);
+
+  // Check for cybersec relevance
+  const lower = combined.toLowerCase();
+  const hasCybersecKeyword = CYBERSEC_KEYWORDS.some(kw => lower.includes(kw));
+
+  // Reject if 2+ ad patterns detected and no cybersec keywords
+  if (adScore >= 2 && !hasCybersecKeyword) return true;
+
+  // Reject if 3+ ad patterns even with cybersec keywords (heavy promo)
+  if (adScore >= 3) return true;
+
+  // Reject very short content that looks like a teaser/ad
+  if (content.length < 50 && adScore >= 1) return true;
+
+  return false;
+}
+
 // Normalize title for dedup comparison
 function normalizeTitle(title: string): string {
   return title
@@ -242,6 +297,7 @@ export async function POST(request: Request) {
 
   let totalNew = 0;
   let totalSkipped = 0;
+  let totalAdsFiltered = 0;
   const errors: string[] = [];
 
   for (const source of sources) {
@@ -279,10 +335,19 @@ export async function POST(request: Request) {
         (recentArticles ?? []).map((a: { title: string }) => normalizeTitle(a.title))
       );
 
-      // Filter new articles
-      const newItems = items.filter(
-        (item) => item.link && !existingUrls.has(item.link) && !existingTitles.has(normalizeTitle(item.title))
-      );
+      // Filter new articles (dedup + ad filtering)
+      let adFiltered = 0;
+      const newItems = items.filter((item) => {
+        if (!item.link || existingUrls.has(item.link) || existingTitles.has(normalizeTitle(item.title))) {
+          return false;
+        }
+        // Filter out ads/promotions
+        if (isAdContent(item.title, item.content)) {
+          adFiltered++;
+          return false;
+        }
+        return true;
+      });
 
       // Process each new article (scrape full content)
       for (const item of newItems.slice(0, 10)) {
@@ -329,7 +394,8 @@ export async function POST(request: Request) {
         }
       }
 
-      totalSkipped += items.length - newItems.length;
+      totalSkipped += items.length - newItems.length - adFiltered;
+      totalAdsFiltered += adFiltered;
 
       // Update last_fetched_at
       await supabase
@@ -346,6 +412,7 @@ export async function POST(request: Request) {
   return NextResponse.json({
     success: true,
     new_articles: totalNew,
+    ads_filtered: totalAdsFiltered,
     skipped_duplicates: totalSkipped,
     sources_processed: sources.length,
     errors: errors.length > 0 ? errors : undefined,

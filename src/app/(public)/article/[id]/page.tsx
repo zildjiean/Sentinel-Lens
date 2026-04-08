@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { TranslateButton } from "@/components/feed/TranslateButton";
+import { DeleteArticleButton } from "@/components/feed/DeleteArticleButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -21,6 +22,18 @@ export default async function ArticleDetailPage({
 
   if (!article) {
     notFound();
+  }
+
+  // Check if current user is admin (for delete button)
+  let isAdmin = false;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    isAdmin = profile?.role === "admin";
   }
 
   const translation = Array.isArray(article.translations)
@@ -73,8 +86,8 @@ export default async function ArticleDetailPage({
         </div>
       </Card>
 
-      {/* Download PDF */}
-      <div className="flex gap-2">
+      {/* Actions */}
+      <div className="flex items-center gap-2">
         <a
           href={`/api/article-pdf?id=${article.id}`}
           target="_blank"
@@ -84,6 +97,9 @@ export default async function ArticleDetailPage({
           <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
           Download PDF Report
         </a>
+        {isAdmin && (
+          <DeleteArticleButton articleId={article.id} articleTitle={article.title} />
+        )}
       </div>
 
       {/* Reference URL */}
