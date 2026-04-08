@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroBriefing } from "@/components/feed/HeroBriefing";
 import { FilteredFeed } from "@/components/feed/FilteredFeed";
+import { ChatBubble } from "@/components/chat/ChatBubble";
 import type { ArticleWithTranslation } from "@/lib/types/database";
 
 export const revalidate = 300;
@@ -51,10 +52,8 @@ export default async function IntelligenceFeedPage() {
       {/* Filtered article feed */}
       <FilteredFeed articles={articles} />
 
-      {/* FAB */}
-      <button className="fixed bottom-8 right-8 bg-secondary text-[#263046] w-14 h-14 rounded-full flex items-center justify-center shadow-[0_4px_24px_rgba(74,225,131,0.3)] hover:scale-105 transition-transform duration-200 z-50">
-        <span className="material-symbols-outlined text-2xl">auto_awesome</span>
-      </button>
+      {/* AI Chat Assistant */}
+      <ChatBubble />
     </>
   );
 }
