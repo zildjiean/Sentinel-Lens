@@ -7,6 +7,15 @@ const SEVERITY_KEYWORDS: Record<string, string[]> = {
   medium: ["patch", "update", "advisory", "security update", "disclosure"],
 };
 
+// Normalize title for dedup comparison
+function normalizeTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function classifySeverity(text: string): string {
   const lower = text.toLowerCase();
   for (const [severity, keywords] of Object.entries(SEVERITY_KEYWORDS)) {
@@ -237,13 +246,26 @@ export async function POST(request: Request) {
       const urls = items.map((i) => i.link).filter(Boolean);
       const { data: existing } = await supabase
         .from("articles")
-        .select("url")
+        .select("url, title")
         .in("url", urls);
 
       const existingUrls = new Set((existing ?? []).map((a: { url: string }) => a.url));
 
+      // Also fetch recent article titles for title-based dedup
+      const { data: recentArticles } = await supabase
+        .from("articles")
+        .select("title")
+        .order("published_at", { ascending: false })
+        .limit(200);
+
+      const existingTitles = new Set(
+        (recentArticles ?? []).map((a: { title: string }) => normalizeTitle(a.title))
+      );
+
       // Filter new articles
-      const newItems = items.filter((item) => item.link && !existingUrls.has(item.link));
+      const newItems = items.filter(
+        (item) => item.link && !existingUrls.has(item.link) && !existingTitles.has(normalizeTitle(item.title))
+      );
 
       // Process each new article (scrape full content)
       for (const item of newItems.slice(0, 10)) {

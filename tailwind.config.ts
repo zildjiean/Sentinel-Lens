@@ -11,24 +11,24 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          DEFAULT: "#131317",
-          bright: "#39393d",
-          tint: "#bbc6e2",
+          DEFAULT: "var(--color-surface)",
+          bright: "var(--color-surface-bright)",
+          tint: "var(--color-surface-tint)",
           container: {
-            lowest: "#0e0e12",
-            low: "#1b1b1f",
-            DEFAULT: "#1f1f23",
-            high: "#2a2a2e",
-            highest: "#353439",
+            lowest: "var(--color-surface-container-lowest)",
+            low: "var(--color-surface-container-low)",
+            DEFAULT: "var(--color-surface-container)",
+            high: "var(--color-surface-container-high)",
+            highest: "var(--color-surface-container-highest)",
           },
         },
         "on-surface": {
-          DEFAULT: "#e4e1e7",
-          variant: "#c4c6cc",
+          DEFAULT: "var(--color-on-surface)",
+          variant: "var(--color-on-surface-variant)",
         },
         primary: {
-          DEFAULT: "#bbc6e2",
-          container: "#0f1a2e",
+          DEFAULT: "var(--color-primary)",
+          container: "var(--color-primary-container)",
         },
         secondary: {
           DEFAULT: "#4ae183",
@@ -36,15 +36,15 @@ const config: Config = {
         },
         tertiary: {
           DEFAULT: "#ffb783",
-          container: "#2e1300",
+          container: "var(--color-tertiary-container)",
         },
         error: {
           DEFAULT: "#ffb4ab",
           container: "#93000a",
         },
         outline: {
-          DEFAULT: "#8e9196",
-          variant: "#44474c",
+          DEFAULT: "var(--color-outline)",
+          variant: "var(--color-outline-variant)",
         },
       },
       fontFamily: {

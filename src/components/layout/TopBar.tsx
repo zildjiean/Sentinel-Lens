@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/Input";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const pageTitles: Record<string, string> = {
   "/": "Intelligence Feed",
@@ -30,6 +31,7 @@ export function TopBar() {
       </div>
       <div className="flex items-center gap-4">
         <div className="w-56"><Input icon="search" placeholder="Search threats..." /></div>
+        <ThemeToggle />
         <button className="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
           <span className="material-symbols-outlined">notifications</span>
         </button>

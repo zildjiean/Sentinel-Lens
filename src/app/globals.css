@@ -5,18 +5,60 @@
 @layer base {
   html {
     font-family: "Inter", sans-serif;
+  }
+
+  html.dark {
+    --color-surface: #131317;
+    --color-surface-bright: #39393d;
+    --color-surface-tint: #bbc6e2;
+    --color-surface-container-lowest: #0e0e12;
+    --color-surface-container-low: #1b1b1f;
+    --color-surface-container: #1f1f23;
+    --color-surface-container-high: #2a2a2e;
+    --color-surface-container-highest: #353439;
+    --color-on-surface: #e4e1e7;
+    --color-on-surface-variant: #c4c6cc;
+    --color-primary: #bbc6e2;
+    --color-primary-container: #0f1a2e;
+    --color-tertiary-container: #2e1300;
+    --color-outline: #8e9196;
+    --color-outline-variant: #44474c;
     background-color: #131317;
     color: #e4e1e7;
+    --scrollbar-track: #131317;
+    --scrollbar-thumb: #353439;
+  }
+
+  html.light {
+    --color-surface: #f5f5f7;
+    --color-surface-bright: #ffffff;
+    --color-surface-tint: #4a5578;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f0f0f2;
+    --color-surface-container: #eaeaec;
+    --color-surface-container-high: #e0e0e3;
+    --color-surface-container-highest: #d5d5d8;
+    --color-on-surface: #1b1b1f;
+    --color-on-surface-variant: #44474c;
+    --color-primary: #3a4d7a;
+    --color-primary-container: #dce2f5;
+    --color-tertiary-container: #ffe0c8;
+    --color-outline: #74777c;
+    --color-outline-variant: #c4c6cc;
+    background-color: #f5f5f7;
+    color: #1b1b1f;
+    --scrollbar-track: #f0f0f2;
+    --scrollbar-thumb: #c4c6cc;
   }
 
   ::-webkit-scrollbar {
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #131317;
+    background: var(--scrollbar-track);
   }
   ::-webkit-scrollbar-thumb {
-    background: #353439;
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
   }
 
@@ -29,6 +71,10 @@
   .glass-panel {
     backdrop-filter: blur(16px);
     background: rgba(19, 19, 23, 0.8);
+  }
+
+  html.light .glass-panel {
+    background: rgba(245, 245, 247, 0.8);
   }
 
   .glow-secondary {

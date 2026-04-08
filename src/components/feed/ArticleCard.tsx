@@ -18,15 +18,30 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
     <Card
       variant="low"
       hoverable
-      className={featured ? "md:col-span-2" : ""}
+      className={`${featured ? "md:col-span-2" : ""} ${
+        article.severity === "critical"
+          ? "ring-1 ring-error/40 relative overflow-hidden"
+          : article.severity === "high"
+          ? "ring-1 ring-tertiary/30 relative overflow-hidden"
+          : ""
+      }`}
     >
+      {/* Severity accent for critical/high */}
+      {article.severity === "critical" && (
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-error via-error/60 to-transparent" />
+      )}
+      {article.severity === "high" && (
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-tertiary via-tertiary/60 to-transparent" />
+      )}
       <div className="flex items-center justify-between mb-3">
         <Badge severity={article.severity} />
         <span className="text-[10px] text-on-surface-variant">{timeAgo}</span>
       </div>
 
       <Link href={`/article/${article.id}`}>
-        <h3 className="font-headline text-lg font-bold text-on-surface line-clamp-2 hover:text-primary transition-colors duration-200 mb-2">
+        <h3 className={`font-headline text-lg font-bold line-clamp-2 hover:text-primary transition-colors duration-200 mb-2 ${
+          article.severity === "critical" ? "text-error" : "text-on-surface"
+        }`}>
           {article.title}
         </h3>
       </Link>

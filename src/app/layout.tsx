@@ -8,6 +8,7 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Sentinel Lens - Cybersecurity Intelligence Feed",
@@ -29,7 +30,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-surface text-on-surface font-body antialiased">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
