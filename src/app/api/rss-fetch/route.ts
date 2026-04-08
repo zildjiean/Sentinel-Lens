@@ -177,6 +177,23 @@ async function scrapeArticleContent(url: string): Promise<string> {
       }
     }
 
+    // Last resort: extract from meta description/og tags
+    if (!articleContent || stripHtml(articleContent).length < 100) {
+      const metaPatterns = [
+        /<meta[^>]+property="og:description"[^>]+content="([^"]+)"/i,
+        /<meta[^>]+name="description"[^>]+content="([^"]+)"/i,
+        /<meta[^>]+content="([^"]+)"[^>]+property="og:description"/i,
+        /<meta[^>]+content="([^"]+)"[^>]+name="description"/i,
+      ];
+      for (const mp of metaPatterns) {
+        const metaMatch = html.match(mp);
+        if (metaMatch && metaMatch[1].length > 50) {
+          articleContent = metaMatch[1];
+          break;
+        }
+      }
+    }
+
     const cleaned = stripHtml(articleContent);
     return cleaned.substring(0, 8000);
   } catch {
