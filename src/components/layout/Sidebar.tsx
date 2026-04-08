@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/Button";
 
 const navItems = [
   { href: "/", icon: "rss_feed", label: "Intelligence Feed" },
@@ -62,10 +61,10 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 space-y-3">
-        <Button variant="primary" size="md" className="w-full">
+        <Link href="/article/new" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-[#263046] text-sm font-semibold hover:opacity-90 transition-opacity">
           <span className="material-symbols-outlined text-lg">add</span>
           New Analysis
-        </Button>
+        </Link>
         <div className="flex flex-col gap-1">
           <button
             onClick={handleSignOut}
