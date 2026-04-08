@@ -12,9 +12,9 @@ Rules:
 
 Return ONLY valid JSON, no markdown formatting.`;
 
-async function callGemini(apiKey: string, systemPrompt: string, userPrompt: string) {
+async function callGemini(apiKey: string, model: string, systemPrompt: string, userPrompt: string) {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -36,10 +36,10 @@ async function callGemini(apiKey: string, systemPrompt: string, userPrompt: stri
     (data.usageMetadata?.promptTokenCount || 0) +
     (data.usageMetadata?.candidatesTokenCount || 0);
 
-  return { text, tokenUsage, model: "gemini-2.0-flash", provider: "gemini" as const };
+  return { text, tokenUsage, model, provider: "gemini" as const };
 }
 
-async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: string) {
+async function callOpenRouter(apiKey: string, model: string, systemPrompt: string, userPrompt: string) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -47,7 +47,7 @@ async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: 
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "google/gemini-2.0-flash-exp:free",
+      model,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -64,7 +64,7 @@ async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: 
   const text = data.choices?.[0]?.message?.content || "";
   const tokenUsage = data.usage?.total_tokens || 0;
 
-  return { text, tokenUsage, model: "google/gemini-2.0-flash-exp:free", provider: "openrouter" as const };
+  return { text, tokenUsage, model, provider: "openrouter" as const };
 }
 
 export async function POST(request: Request) {
@@ -114,12 +114,15 @@ export async function POST(request: Request) {
   const { data: settings } = await supabase
     .from("app_settings")
     .select("key, value")
-    .in("key", ["llm_provider", "llm_api_keys", "gemini_api_key", "openrouter_api_key"]);
+    .in("key", ["llm_provider", "llm_api_keys", "gemini_api_key", "openrouter_api_key", "gemini_model", "openrouter_model"]);
 
   const providerSetting = settings?.find((s) => s.key === "llm_provider");
   const keysSetting = settings?.find((s) => s.key === "llm_api_keys");
   const geminiKeySetting = settings?.find((s) => s.key === "gemini_api_key");
   const openrouterKeySetting = settings?.find((s) => s.key === "openrouter_api_key");
+
+  const geminiModelSetting = settings?.find((s) => s.key === "gemini_model");
+  const openrouterModelSetting = settings?.find((s) => s.key === "openrouter_model");
 
   const provider = ((providerSetting?.value as string) || "gemini").replace(/"/g, "");
   const keys = (keysSetting?.value as Record<string, string>) || {};
@@ -128,7 +131,11 @@ export async function POST(request: Request) {
   const geminiKey = keys.gemini || ((geminiKeySetting?.value as string) || "").replace(/"/g, "") || process.env.GEMINI_API_KEY || "";
   const openrouterKey = keys.openrouter || ((openrouterKeySetting?.value as string) || "").replace(/"/g, "") || process.env.OPENROUTER_API_KEY || "";
 
+  const geminiModel = ((geminiModelSetting?.value as string) || "gemini-2.0-flash").replace(/"/g, "");
+  const openrouterModel = ((openrouterModelSetting?.value as string) || "google/gemini-2.0-flash-exp:free").replace(/"/g, "");
+
   const activeKey = provider === "gemini" ? geminiKey : openrouterKey;
+  const activeModel = provider === "gemini" ? geminiModel : openrouterModel;
   if (!activeKey) {
     return NextResponse.json(
       { error: `No API key configured for ${provider}. Go to Settings to add one.` },
@@ -148,8 +155,8 @@ Excerpt: ${article.excerpt}`;
   try {
     // Call LLM
     const result = provider === "gemini"
-      ? await callGemini(activeKey, SYSTEM_PROMPT, userPrompt)
-      : await callOpenRouter(activeKey, SYSTEM_PROMPT, userPrompt);
+      ? await callGemini(activeKey, activeModel, SYSTEM_PROMPT, userPrompt)
+      : await callOpenRouter(activeKey, activeModel, SYSTEM_PROMPT, userPrompt);
 
     // Parse JSON response
     let parsed;

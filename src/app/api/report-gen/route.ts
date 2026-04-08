@@ -34,9 +34,9 @@ function parseJSONResponse(text: string): Record<string, unknown> {
   return JSON.parse(cleaned);
 }
 
-async function callGemini(apiKey: string, systemPrompt: string, userPrompt: string) {
+async function callGemini(apiKey: string, model: string, systemPrompt: string, userPrompt: string) {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -59,10 +59,10 @@ async function callGemini(apiKey: string, systemPrompt: string, userPrompt: stri
     (data.usageMetadata?.promptTokenCount || 0) +
     (data.usageMetadata?.candidatesTokenCount || 0);
 
-  return { text, tokenUsage, model: "gemini-2.0-flash", provider: "gemini" as const };
+  return { text, tokenUsage, model, provider: "gemini" as const };
 }
 
-async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: string) {
+async function callOpenRouter(apiKey: string, model: string, systemPrompt: string, userPrompt: string) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -71,7 +71,7 @@ async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: 
       "X-Title": "Sentinel Lens",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.0-flash-exp:free",
+      model,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -90,19 +90,21 @@ async function callOpenRouter(apiKey: string, systemPrompt: string, userPrompt: 
   const text = data.choices?.[0]?.message?.content || "";
   const tokenUsage = data.usage?.total_tokens || 0;
 
-  return { text, tokenUsage, model: "google/gemini-2.0-flash-exp:free", provider: "openrouter" as const };
+  return { text, tokenUsage, model, provider: "openrouter" as const };
 }
 
 async function getApiKeys(supabase: Awaited<ReturnType<typeof createClient>>) {
   const { data: settings } = await supabase
     .from("app_settings")
     .select("key, value")
-    .in("key", ["llm_provider", "llm_api_keys", "gemini_api_key", "openrouter_api_key"]);
+    .in("key", ["llm_provider", "llm_api_keys", "gemini_api_key", "openrouter_api_key", "gemini_model", "openrouter_model"]);
 
   const providerSetting = settings?.find((s) => s.key === "llm_provider");
   const keysSetting = settings?.find((s) => s.key === "llm_api_keys");
   const geminiKeySetting = settings?.find((s) => s.key === "gemini_api_key");
   const openrouterKeySetting = settings?.find((s) => s.key === "openrouter_api_key");
+  const geminiModelSetting = settings?.find((s) => s.key === "gemini_model");
+  const openrouterModelSetting = settings?.find((s) => s.key === "openrouter_model");
 
   const provider = ((providerSetting?.value as string) || "gemini").replace(/"/g, "");
   const keys = (keysSetting?.value as Record<string, string>) || {};
@@ -110,18 +112,22 @@ async function getApiKeys(supabase: Awaited<ReturnType<typeof createClient>>) {
   const geminiKey = keys.gemini || ((geminiKeySetting?.value as string) || "").replace(/"/g, "") || process.env.GEMINI_API_KEY || "";
   const openrouterKey = keys.openrouter || ((openrouterKeySetting?.value as string) || "").replace(/"/g, "") || process.env.OPENROUTER_API_KEY || "";
 
-  return { provider, geminiKey, openrouterKey };
+  const geminiModel = ((geminiModelSetting?.value as string) || "gemini-2.0-flash").replace(/"/g, "");
+  const openrouterModel = ((openrouterModelSetting?.value as string) || "google/gemini-2.0-flash-exp:free").replace(/"/g, "");
+  const model = provider === "gemini" ? geminiModel : openrouterModel;
+
+  return { provider, geminiKey, openrouterKey, model };
 }
 
-async function callLLM(provider: string, geminiKey: string, openrouterKey: string, systemPrompt: string, userPrompt: string) {
+async function callLLM(provider: string, geminiKey: string, openrouterKey: string, model: string, systemPrompt: string, userPrompt: string) {
   const activeKey = provider === "gemini" ? geminiKey : openrouterKey;
   if (!activeKey) {
     throw new Error(`No API key configured for ${provider}. Go to Settings to add one.`);
   }
 
   return provider === "gemini"
-    ? await callGemini(activeKey, systemPrompt, userPrompt)
-    : await callOpenRouter(activeKey, systemPrompt, userPrompt);
+    ? await callGemini(activeKey, model, systemPrompt, userPrompt)
+    : await callOpenRouter(activeKey, model, systemPrompt, userPrompt);
 }
 
 export async function POST(request: Request) {
@@ -160,7 +166,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { provider, geminiKey, openrouterKey } = await getApiKeys(supabase);
+    const { provider, geminiKey, openrouterKey, model } = await getApiKeys(supabase);
 
     // Build article summaries for the LLM
     const articleSummaries = articles
@@ -173,7 +179,7 @@ export async function POST(request: Request) {
     const userPrompt = `Generate a ${report_type} threat intelligence report titled "${title}" (Classification: ${classification}) based on these ${articles.length} articles:\n\n${articleSummaries}`;
 
     // Generate English report
-    const enResult = await callLLM(provider, geminiKey, openrouterKey, REPORT_SYSTEM_PROMPT, userPrompt);
+    const enResult = await callLLM(provider, geminiKey, openrouterKey, model, REPORT_SYSTEM_PROMPT, userPrompt);
     let contentEn: Record<string, unknown>;
     try {
       contentEn = parseJSONResponse(enResult.text);
@@ -191,7 +197,7 @@ export async function POST(request: Request) {
 
     // Generate Thai translation
     const thUserPrompt = `Translate this cybersecurity report to Thai:\n\n${JSON.stringify(contentEn, null, 2)}`;
-    const thResult = await callLLM(provider, geminiKey, openrouterKey, TRANSLATE_SYSTEM_PROMPT, thUserPrompt);
+    const thResult = await callLLM(provider, geminiKey, openrouterKey, model, TRANSLATE_SYSTEM_PROMPT, thUserPrompt);
     let contentTh: Record<string, unknown>;
     try {
       contentTh = parseJSONResponse(thResult.text);
