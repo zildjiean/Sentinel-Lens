@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { mergeLayoutConfig } from "@/lib/enterprise-report/merge-layout";
 import { buildReportHTML } from "@/lib/enterprise-report/generate-pdf";
 import type { LayoutConfig, ReportContentEN } from "@/lib/types/enterprise";
-import chromium from "@sparticuz/chromium";
+import chromium from "@sparticuz/chromium-min";
 
 export async function POST(
   request: Request,
@@ -82,7 +82,9 @@ export async function POST(
   try {
     const puppeteer = await import("puppeteer-core");
 
-    const executablePath = await chromium.executablePath();
+    const executablePath = await chromium.executablePath(
+      "https://github.com/nichochar/chromium-binaries/raw/main/chromium-v131.0.0-pack.tar"
+    );
 
     const browser = await puppeteer.default.launch({
       headless: true,
