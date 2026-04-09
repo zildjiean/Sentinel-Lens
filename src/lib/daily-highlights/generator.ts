@@ -63,7 +63,6 @@ export function parseHighlightsResponse(raw: string): HighlightsData {
     throw new Error(`Failed to parse AI response as JSON: ${cleaned.substring(0, 200)}`);
   }
 
-  const hasHighlights = Boolean(parsed.has_highlights);
   const noHighlightReason =
     typeof parsed.no_highlight_reason === "string"
       ? parsed.no_highlight_reason
@@ -87,7 +86,8 @@ export function parseHighlightsResponse(raw: string): HighlightsData {
       impact_level: h.impact_level as "critical" | "high" | "notable",
     }));
 
-  return { has_highlights: hasHighlights, no_highlight_reason: noHighlightReason, highlights };
+  // Derive has_highlights from actual validated array, not LLM's claim
+  return { has_highlights: highlights.length > 0, no_highlight_reason: noHighlightReason, highlights };
 }
 
 export async function generateHighlights(
@@ -143,6 +143,8 @@ export async function generateHighlights(
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        signal: AbortSignal.timeout(30000),
         body: JSON.stringify({
           system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: [{ parts: [{ text: userPrompt }] }],
@@ -164,6 +166,8 @@ export async function generateHighlights(
         Authorization: `Bearer ${activeKey}`,
         "X-Title": "Sentinel Lens",
       },
+      cache: "no-store",
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
         model,
         messages: [

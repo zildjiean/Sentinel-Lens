@@ -3,9 +3,32 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateHighlights } from "@/lib/daily-highlights/generator";
-import type { HighlightsData } from "@/lib/daily-highlights/generator";
+import type { HighlightsData, HighlightItem } from "@/lib/daily-highlights/generator";
+
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
 const CACHE_HOURS = 4;
+
+async function enrichHighlightsWithArticles(
+  highlightsData: HighlightsData,
+  supabase: SupabaseClient
+) {
+  const articleIds = highlightsData.highlights.map((h: HighlightItem) => h.article_id);
+  const { data: articles } =
+    articleIds.length > 0
+      ? await supabase
+          .from("articles")
+          .select("id, title, severity, excerpt, tags, published_at, url")
+          .in("id", articleIds)
+      : { data: [] };
+
+  const articleMap = new Map((articles || []).map((a) => [a.id, a]));
+
+  return highlightsData.highlights.map((h: HighlightItem) => ({
+    ...h,
+    article: articleMap.get(h.article_id) || null,
+  }));
+}
 
 export async function GET() {
   const supabase = await createClient();
@@ -17,35 +40,22 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // 1. Check for fresh cache
+  // 1. Check for fresh cache (maybeSingle returns null without error when 0 rows)
   const { data: cached } = await supabase
     .from("daily_highlights")
     .select("*")
     .gt("expires_at", new Date().toISOString())
     .order("generated_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (cached) {
     const highlightsData = cached.highlights_data as HighlightsData;
-
-    // Enrich with article details
-    const articleIds = highlightsData.highlights.map((h) => h.article_id);
-    const { data: articles } = articleIds.length > 0
-      ? await supabase
-          .from("articles")
-          .select("id, title, severity, excerpt, tags, published_at, url")
-          .in("id", articleIds)
-      : { data: [] };
-
-    const articleMap = new Map((articles || []).map((a) => [a.id, a]));
+    const enrichedHighlights = await enrichHighlightsWithArticles(highlightsData, supabase);
 
     return NextResponse.json({
       has_highlights: highlightsData.has_highlights,
-      highlights: highlightsData.highlights.map((h) => ({
-        ...h,
-        article: articleMap.get(h.article_id) || null,
-      })),
+      highlights: enrichedHighlights,
       no_highlight_reason: highlightsData.no_highlight_reason,
       generated_at: cached.generated_at,
       is_cached: true,
@@ -82,11 +92,11 @@ export async function GET() {
     );
   }
 
-  // 3. Save to DB
+  // 3. Save to DB and clean up old rows
   const now = new Date();
   const expiresAt = new Date(now.getTime() + CACHE_HOURS * 60 * 60 * 1000);
 
-  await supabase.from("daily_highlights").insert({
+  const { error: insertError } = await supabase.from("daily_highlights").insert({
     highlights_data: highlightsData,
     article_count: articlesForAI.length,
     generated_at: now.toISOString(),
@@ -94,23 +104,25 @@ export async function GET() {
     created_by: user.id,
   });
 
-  // 4. Enrich with article details
-  const articleIds = highlightsData.highlights.map((h) => h.article_id);
-  const { data: articles } = articleIds.length > 0
-    ? await supabase
-        .from("articles")
-        .select("id, title, severity, excerpt, tags, published_at, url")
-        .in("id", articleIds)
-    : { data: [] };
+  if (insertError) {
+    console.warn("[daily-highlights] Failed to cache result:", insertError.message);
+  }
 
-  const articleMap = new Map((articles || []).map((a) => [a.id, a]));
+  // Clean up expired rows (fire-and-forget)
+  supabase
+    .from("daily_highlights")
+    .delete()
+    .lt("expires_at", new Date().toISOString())
+    .then(({ error }) => {
+      if (error) console.warn("[daily-highlights] Cleanup failed:", error.message);
+    });
+
+  // 4. Enrich with article details
+  const enrichedHighlights = await enrichHighlightsWithArticles(highlightsData, supabase);
 
   return NextResponse.json({
     has_highlights: highlightsData.has_highlights,
-    highlights: highlightsData.highlights.map((h) => ({
-      ...h,
-      article: articleMap.get(h.article_id) || null,
-    })),
+    highlights: enrichedHighlights,
     no_highlight_reason: highlightsData.no_highlight_reason,
     generated_at: now.toISOString(),
     is_cached: false,

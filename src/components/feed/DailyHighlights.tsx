@@ -50,8 +50,12 @@ export function DailyHighlights() {
     try {
       const res = await fetch("/api/daily-highlights");
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || `HTTP ${res.status}`);
+        let message = `HTTP ${res.status}`;
+        try {
+          const body = await res.json();
+          message = body.error || message;
+        } catch { /* non-JSON error response */ }
+        throw new Error(message);
       }
       const json = await res.json();
       setData(json);

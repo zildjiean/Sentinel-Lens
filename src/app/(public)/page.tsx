@@ -55,9 +55,7 @@ export default async function IntelligenceFeedPage() {
       </div>
 
       {/* AI-curated daily highlights */}
-      <div className="mb-8">
-        <DailyHighlights />
-      </div>
+      <DailyHighlights />
 
       {/* Filtered article feed */}
       <FilteredFeed articles={articles} />

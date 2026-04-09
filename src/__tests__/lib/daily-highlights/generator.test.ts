@@ -99,6 +99,20 @@ describe("parseHighlightsResponse", () => {
     expect(result.highlights[1].article_id).toBe("valid-3");
   });
 
+  it("derives has_highlights from actual array, not LLM claim", () => {
+    // LLM says true but all items are invalid → should be false
+    const json = JSON.stringify({
+      has_highlights: true,
+      no_highlight_reason: null,
+      highlights: [
+        { article_id: 123, reason_th: "bad", impact_level: "critical" },
+      ],
+    });
+    const result = parseHighlightsResponse(json);
+    expect(result.has_highlights).toBe(false);
+    expect(result.highlights).toHaveLength(0);
+  });
+
   it("throws on invalid JSON", () => {
     expect(() => parseHighlightsResponse("not json at all")).toThrow("Failed to parse AI response");
   });

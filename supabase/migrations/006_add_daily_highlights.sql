@@ -24,3 +24,8 @@ CREATE POLICY "Authenticated users can insert daily highlights"
   ON daily_highlights FOR INSERT
   TO authenticated
   WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can delete expired highlights"
+  ON daily_highlights FOR DELETE
+  TO authenticated
+  USING (expires_at < now());
