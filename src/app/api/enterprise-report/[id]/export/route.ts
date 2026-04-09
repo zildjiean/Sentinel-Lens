@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { mergeLayoutConfig } from "@/lib/enterprise-report/merge-layout";
 import { buildReportHTML } from "@/lib/enterprise-report/generate-pdf";
 import type { LayoutConfig, ReportContentEN } from "@/lib/types/enterprise";
-import fs from "fs";
+import chromium from "@sparticuz/chromium";
 
 export async function POST(
   request: Request,
@@ -80,34 +80,14 @@ export async function POST(
   // Launch Puppeteer
   let pdfBuffer: Buffer;
   try {
-    // Dynamic import to avoid module-level import issues
     const puppeteer = await import("puppeteer-core");
 
-    // Detect executable path
-    let executablePath: string | undefined;
-    const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-    const linuxChrome = "/usr/bin/google-chrome";
-    const linuxChromium = "/usr/bin/chromium-browser";
-
-    if (fs.existsSync(macChrome)) {
-      executablePath = macChrome;
-    } else if (fs.existsSync(linuxChrome)) {
-      executablePath = linuxChrome;
-    } else if (fs.existsSync(linuxChromium)) {
-      executablePath = linuxChromium;
-    }
-
-    if (!executablePath) {
-      return NextResponse.json(
-        { error: "No Chrome/Chromium executable found. Please install Google Chrome." },
-        { status: 500 }
-      );
-    }
+    const executablePath = await chromium.executablePath();
 
     const browser = await puppeteer.default.launch({
       headless: true,
       executablePath,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: chromium.args,
     });
 
     const page = await browser.newPage();
