@@ -10,6 +10,7 @@ import {
   Info,
   type LucideIcon,
 } from "lucide-react";
+import { formatDateTimeTh } from "@/lib/utils/date";
 
 interface Notification {
   id: string;
@@ -152,7 +153,7 @@ export function NotificationBell() {
                     </p>
                     <p className="text-[10px] text-on-surface-variant/70 line-clamp-2 mt-0.5">{n.message}</p>
                     <p className="text-[10px] text-on-surface-variant/50 mt-1">
-                      {new Date(n.created_at).toLocaleString()}
+                      {formatDateTimeTh(n.created_at)}
                     </p>
                   </div>
                   {!n.is_read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}

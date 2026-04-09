@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/Card";
 import { RiskMatrix } from "@/components/report/RiskMatrix";
 import type { Report } from "@/lib/types/database";
+import { formatDateTh } from "@/lib/utils/date";
 
 interface ReportViewerProps {
   report: Report;
@@ -23,7 +24,7 @@ export function ReportViewer({ report }: ReportViewerProps) {
         <div className="flex items-center justify-center gap-6 text-sm text-on-surface-variant">
           <span>Type: {report.report_type}</span>
           <span>
-            Generated: {new Date(report.created_at).toLocaleDateString()}
+            Generated: {formatDateTh(report.created_at)}
           </span>
         </div>
       </div>

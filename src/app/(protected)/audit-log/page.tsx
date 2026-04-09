@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { type LucideIcon, PlusCircle, Trash2, Pencil, Languages, FileText, Rss, LogIn, Download, Hourglass, History, Info } from "lucide-react";
+import { formatDateTimeTh } from "@/lib/utils/date";
 
 interface AuditEntry {
   id: string;
@@ -114,7 +115,7 @@ export default function AuditLogPage() {
                   )}
                 </div>
                 <span className="text-[10px] text-on-surface-variant/60 whitespace-nowrap">
-                  {new Date(log.created_at).toLocaleString()}
+                  {formatDateTimeTh(log.created_at)}
                 </span>
               </div>
             ))}

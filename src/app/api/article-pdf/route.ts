@@ -35,7 +35,7 @@ export async function GET(request: Request) {
 
   const sourceName = (article.rss_sources as { name: string } | null)?.name || "Manual Entry";
   const sevColor = severityColors[article.severity] || "#6b7280";
-  const publishDate = new Date(article.published_at).toLocaleDateString("en-US", {
+  const publishDate = new Date(article.published_at).toLocaleDateString("th-TH", {
     year: "numeric",
     month: "long",
     day: "numeric",

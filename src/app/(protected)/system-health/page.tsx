@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { type LucideIcon, CheckCircle, TriangleAlert, CircleAlert, CloudOff, HelpCircle, RefreshCw, Activity, Rss, FileText, Languages } from "lucide-react";
+import { formatDateTimeTh } from "@/lib/utils/date";
 
 interface HealthData {
   status: string;
@@ -87,7 +88,7 @@ export default function SystemHealthPage() {
                   System {health.status}
                 </h2>
                 <p className="text-xs text-on-surface-variant">
-                  Last checked: {lastChecked?.toLocaleString() || "N/A"}
+                  Last checked: {lastChecked ? formatDateTimeTh(lastChecked) : "N/A"}
                 </p>
               </div>
             </div>

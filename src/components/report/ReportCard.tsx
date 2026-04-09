@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { FileText, Download, Share2, Trash2 } from "lucide-react";
 import type { Report } from "@/lib/types/database";
+import { formatDateThShort } from "@/lib/utils/date";
 
 interface ReportCardProps {
   report: Report;
@@ -47,7 +48,7 @@ export function ReportCard({ report, onDelete }: ReportCardProps) {
           <Badge label={report.report_type} />
         </div>
         <p className="text-xs text-on-surface-variant">
-          Created: {new Date(report.created_at).toLocaleDateString()}
+          Created: {formatDateThShort(report.created_at)}
         </p>
       </div>
 

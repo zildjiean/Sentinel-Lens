@@ -8,6 +8,7 @@ import { RelatedArticles } from "@/components/feed/RelatedArticles";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, FileText, Link as LinkIcon, ExternalLink, Languages } from "lucide-react";
+import { formatDateTh } from "@/lib/utils/date";
 import type { Metadata } from "next";
 
 export const revalidate = 60; // Cache for 1 minute
@@ -104,11 +105,7 @@ export default async function ArticleDetailPage({
 
         <div className="flex items-center gap-3 text-xs text-on-surface-variant">
           {article.author && <span>By {article.author}</span>}
-          <span>{new Date(article.published_at).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}</span>
+          <span>{formatDateTh(article.published_at)}</span>
         </div>
       </div>
 

@@ -8,6 +8,7 @@ import {
   Globe, Hash, Mail, Link as LinkIcon, Server,
   type LucideIcon,
 } from "lucide-react";
+import { formatDateThShort } from "@/lib/utils/date";
 
 interface IOC {
   id: string;
@@ -261,7 +262,7 @@ export default function IOCsPage() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-[10px] text-on-surface-variant/50">
-                      {new Date(ioc.last_seen).toLocaleDateString()}
+                      {formatDateThShort(ioc.last_seen)}
                     </span>
                     <button
                       onClick={() => handleDelete(ioc.id)}

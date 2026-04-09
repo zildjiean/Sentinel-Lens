@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Hourglass, Bookmark, BookmarkMinus } from "lucide-react";
+import { formatDateThShort } from "@/lib/utils/date";
 
 interface BookmarkItem {
   id: string;
@@ -78,7 +79,7 @@ export default function BookmarksPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <Badge severity={bm.articles.severity as "critical" | "high" | "medium" | "low" | "info"} />
                     <span className="text-[10px] text-on-surface-variant">
-                      {new Date(bm.articles.published_at).toLocaleDateString()}
+                      {formatDateThShort(bm.articles.published_at)}
                     </span>
                   </div>
                   <Link href={`/article/${bm.articles.id}`} className="text-sm font-semibold text-on-surface hover:text-primary transition-colors line-clamp-1">

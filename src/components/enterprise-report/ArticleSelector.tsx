@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/Input";
+import { formatDateThShort } from "@/lib/utils/date";
 
 interface Article {
   id: string;
@@ -133,7 +134,7 @@ export function ArticleSelector({ selectedIds, onSelect }: ArticleSelectorProps)
                     </span>
                     {article.published_at && (
                       <span className="text-[10px] text-on-surface-variant">
-                        {new Date(article.published_at).toLocaleDateString()}
+                        {formatDateThShort(article.published_at)}
                       </span>
                     )}
                   </div>

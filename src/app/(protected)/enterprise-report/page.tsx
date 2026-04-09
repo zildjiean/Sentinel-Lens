@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Plus, FileText } from "lucide-react";
+import { formatDateThShort } from "@/lib/utils/date";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/Badge";
 import type { ArticleSeverity } from "@/lib/types/database";
@@ -102,11 +103,7 @@ export default async function EnterpriseReportListPage() {
 
               {/* Date */}
               <p className="text-[11px] text-on-surface-variant">
-                {new Date(report.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+                {formatDateThShort(report.created_at)}
               </p>
             </Link>
           ))}

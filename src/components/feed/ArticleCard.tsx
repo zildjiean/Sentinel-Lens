@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { th } from "date-fns/locale";
 import { Languages } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -13,6 +14,7 @@ interface ArticleCardProps {
 export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   const timeAgo = formatDistanceToNow(new Date(article.published_at), {
     addSuffix: true,
+    locale: th,
   });
 
   return (
