@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroBriefing } from "@/components/feed/HeroBriefing";
+import { DailyHighlights } from "@/components/feed/DailyHighlights";
 import { FilteredFeed } from "@/components/feed/FilteredFeed";
 import dynamic from "next/dynamic";
 
@@ -51,6 +52,11 @@ export default async function IntelligenceFeedPage() {
           translatedCount={translatedCount}
           latestArticles={articles.slice(0, 5)}
         />
+      </div>
+
+      {/* AI-curated daily highlights */}
+      <div className="mb-8">
+        <DailyHighlights />
       </div>
 
       {/* Filtered article feed */}
