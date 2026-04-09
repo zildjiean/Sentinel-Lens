@@ -71,7 +71,7 @@ export function Sidebar() {
           return (
             <Link key={item.href} href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low ${
                 isActive ? "bg-surface-container-high border-l-4 border-primary text-primary font-semibold" : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
               }`}>
               <item.icon className="w-5 h-5" />
@@ -82,7 +82,7 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 space-y-3">
-        <Link href="/article/new" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-[#263046] text-sm font-semibold hover:opacity-90 transition-opacity">
+        <Link href="/article/new" onClick={() => setMobileOpen(false)} className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-[#263046] text-sm font-semibold hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low">
           <Plus className="w-5 h-5" />
           New Analysis
         </Link>
@@ -105,7 +105,7 @@ export function Sidebar() {
       <button
         aria-label="Toggle mobile menu"
         onClick={() => setMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface shadow-lg"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         <Menu className="w-5 h-5" />
       </button>

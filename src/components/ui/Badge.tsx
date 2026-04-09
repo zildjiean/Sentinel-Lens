@@ -26,7 +26,7 @@ export function Badge({ severity, status, label, className = "" }: BadgeProps) {
   const classes = severity ? severityClasses[severity] : status ? statusClasses[status] : "bg-surface-container-high text-on-surface-variant";
   const text = label || severity || status || "";
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-widest ${classes} ${className}`}>
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider ${classes} ${className}`}>
       {text}
     </span>
   );

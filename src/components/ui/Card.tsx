@@ -20,7 +20,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-xl p-6 ${variantClasses[variant]} ${hoverable ? "hover:bg-surface-container-high transition-all duration-200 cursor-pointer" : ""} ${className}`}
+        className={`rounded-xl p-6 transition-colors duration-200 ease-out ${variantClasses[variant]} ${hoverable ? "hover:bg-surface-container-high cursor-pointer" : ""} ${className}`}
         {...props}
       >
         {children}

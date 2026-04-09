@@ -31,16 +31,16 @@ const config: Config = {
           container: "var(--color-primary-container)",
         },
         secondary: {
-          DEFAULT: "#4ae183",
-          container: "#06bb63",
+          DEFAULT: "var(--color-secondary)",
+          container: "var(--color-secondary-container)",
         },
         tertiary: {
-          DEFAULT: "#ffb783",
+          DEFAULT: "var(--color-tertiary)",
           container: "var(--color-tertiary-container)",
         },
         error: {
-          DEFAULT: "#ffb4ab",
-          container: "#93000a",
+          DEFAULT: "var(--color-error)",
+          container: "var(--color-error-container)",
         },
         outline: {
           DEFAULT: "var(--color-outline)",
@@ -52,10 +52,12 @@ const config: Config = {
         body: ["Inter", "sans-serif"],
       },
       borderRadius: {
-        DEFAULT: "0.125rem",
-        lg: "0.25rem",
-        xl: "0.5rem",
-        "2xl": "0.75rem",
+        DEFAULT: "0.5rem",
+        sm: "0.25rem",
+        md: "0.5rem",
+        lg: "0.75rem",
+        xl: "1rem",
+        "2xl": "1.25rem",
         full: "9999px",
       },
     },

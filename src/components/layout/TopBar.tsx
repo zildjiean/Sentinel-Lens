@@ -25,7 +25,7 @@ export function TopBar() {
   )?.[1] || "Sentinel Lens";
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-surface/80 backdrop-blur-md z-40 flex items-center justify-between px-4 lg:px-8">
+    <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-surface/80 backdrop-blur-md z-40 flex items-center justify-between px-4 lg:px-8 pt-[env(safe-area-inset-top)]">
       <div className="flex items-center gap-6">
         <div className="w-10 lg:hidden" /> {/* Spacer for hamburger */}
         <h2 className="font-headline text-lg font-semibold text-on-surface">{title}</h2>
