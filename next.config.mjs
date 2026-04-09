@@ -7,14 +7,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
-  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
-  experimental: {
-    outputFileTracingIncludes: {
-      "/api/enterprise-report/\\[id\\]/export": [
-        "./node_modules/@sparticuz/chromium/bin/**",
-      ],
-    },
-  },
+  serverExternalPackages: ["@sparticuz/chromium-min", "puppeteer-core"],
   images: {
     remotePatterns: [
       {
