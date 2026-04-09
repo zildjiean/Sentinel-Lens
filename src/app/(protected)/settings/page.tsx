@@ -6,13 +6,17 @@ import { RSSManager } from "@/components/settings/RSSManager";
 import { UserManager } from "@/components/settings/UserManager";
 import { ReportTemplates } from "@/components/settings/ReportTemplates";
 import { TokenBudget } from "@/components/settings/TokenBudget";
-import { type LucideIcon, Bot, Rss, FileText, Users } from "lucide-react";
+import { type LucideIcon, Bot, Rss, FileText, Users, Mail, Layout } from "lucide-react";
+import EmailConfig from "@/components/settings/EmailConfig";
+import LayoutManager from "@/components/settings/LayoutManager";
 
 const tabs: { id: string; label: string; icon: LucideIcon; description: string }[] = [
   { id: "llm", label: "LLM Provider", icon: Bot, description: "API keys, model selection, and token budget" },
   { id: "rss", label: "RSS Sources", icon: Rss, description: "Manage news feeds and fetch schedule" },
   { id: "reports", label: "Report Templates", icon: FileText, description: "Customize report generation prompts" },
   { id: "users", label: "User Management", icon: Users, description: "Create users and assign roles" },
+  { id: "email", label: "Email", icon: Mail, description: "Email provider configuration for alerts" },
+  { id: "layouts", label: "Report Layouts", icon: Layout, description: "Enterprise report layout templates" },
 ];
 
 export default function SettingsPage() {
@@ -84,6 +88,9 @@ export default function SettingsPage() {
           {activeTab === "reports" && <ReportTemplates />}
 
           {activeTab === "users" && <UserManager />}
+
+          {activeTab === "email" && <EmailConfig />}
+          {activeTab === "layouts" && <LayoutManager />}
         </div>
       </div>
     </div>

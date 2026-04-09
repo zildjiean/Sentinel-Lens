@@ -18,6 +18,8 @@ import {
   Menu,
   Plus,
   LogOut,
+  FileBarChart,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 
@@ -31,6 +33,8 @@ const navItems: { href: string; icon: LucideIcon; label: string }[] = [
   { href: "/bookmarks", icon: Bookmark, label: "My Bookmarks" },
   { href: "/audit-log", icon: History, label: "Audit Log" },
   { href: "/system-health", icon: Activity, label: "System Health" },
+  { href: "/enterprise-report", icon: FileBarChart, label: "Enterprise Report" },
+  { href: "/watchlist", icon: Eye, label: "Watch List" },
   { href: "/settings", icon: ShieldCheck, label: "Settings" },
 ];
 
