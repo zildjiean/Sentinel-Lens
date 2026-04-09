@@ -95,6 +95,9 @@ export function Sidebar() {
             Sign Out
           </button>
         </div>
+        <div className="pt-2 border-t border-surface-container text-center">
+          <span className="text-[10px] text-on-surface-variant/50 tracking-wide">v{process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}</span>
+        </div>
       </div>
     </>
   );
