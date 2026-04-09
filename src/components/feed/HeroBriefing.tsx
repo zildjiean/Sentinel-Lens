@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Languages, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { DailyHighlights } from "@/components/feed/DailyHighlights";
 import type { ArticleWithTranslation } from "@/lib/types/database";
 
 interface HeroBriefingProps {
@@ -26,6 +27,9 @@ export function HeroBriefing({
       <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10">
+        {/* Daily Highlights — AI-curated top stories */}
+        <DailyHighlights />
+
         <h2 className="font-headline text-sm font-semibold text-on-surface-variant uppercase tracking-widest mb-6">
           Daily Intelligence Briefing
         </h2>

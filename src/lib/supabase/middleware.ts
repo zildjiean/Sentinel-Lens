@@ -27,19 +27,26 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isProtectedRoute =
-    request.nextUrl.pathname.startsWith("/translation-lab") ||
-    request.nextUrl.pathname.startsWith("/report-archive") ||
-    request.nextUrl.pathname.startsWith("/report") ||
-    request.nextUrl.pathname.startsWith("/settings");
+  const pathname = request.nextUrl.pathname;
 
-  if (isProtectedRoute && !user) {
+  // Public routes that don't require authentication
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname.startsWith("/callback") ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/_next/") ||
+    pathname === "/icon" ||
+    pathname === "/favicon.ico";
+
+  // Redirect unauthenticated users to login for all non-public routes
+  if (!isPublicRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && isProtectedRoute) {
+  // Role-based access control for authenticated users
+  if (user && !isPublicRoute) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -47,7 +54,6 @@ export async function updateSession(request: NextRequest) {
       .single();
 
     const role = profile?.role || "viewer";
-    const pathname = request.nextUrl.pathname;
 
     if (pathname.startsWith("/settings") && role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
