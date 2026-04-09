@@ -1,18 +1,8 @@
 import Link from "next/link";
 import { Plus, FileText } from "lucide-react";
-import { formatDateThShort } from "@/lib/utils/date";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/Badge";
-import type { ArticleSeverity } from "@/lib/types/database";
-import type { EnterpriseReport, EnterpriseReportStatus } from "@/lib/types/enterprise";
-
-const statusColors: Record<EnterpriseReportStatus, string> = {
-  draft: "bg-surface-container-high text-on-surface-variant",
-  generating: "bg-primary/20 text-primary",
-  generated: "bg-secondary/20 text-secondary",
-  reviewed: "bg-secondary/20 text-secondary",
-  published: "bg-green-500/20 text-green-600",
-};
+import { EnterpriseReportCard } from "@/components/enterprise-report/EnterpriseReportCard";
+import type { EnterpriseReport } from "@/lib/types/enterprise";
 
 export default async function EnterpriseReportListPage() {
   const supabase = await createClient();
@@ -65,47 +55,16 @@ export default async function EnterpriseReportListPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {list.map((report) => (
-            <Link
+            <EnterpriseReportCard
               key={report.id}
-              href={`/enterprise-report/${report.id}`}
-              className="group block rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/20 hover:border-outline-variant transition-all duration-200 p-5 space-y-3"
-            >
-              {/* Type + Status row */}
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-semibold uppercase tracking-wide">
-                  {report.report_type}
-                </span>
-                <span
-                  className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ${
-                    statusColors[report.status]
-                  }`}
-                >
-                  {report.status}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h2 className="text-sm font-semibold text-on-surface font-headline group-hover:text-primary transition-colors line-clamp-2">
-                {report.title}
-              </h2>
-
-              {/* Severity + Classification */}
-              <div className="flex items-center gap-2 flex-wrap">
-                {report.severity && (
-                  <Badge
-                    severity={report.severity as ArticleSeverity}
-                  />
-                )}
-                <span className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-semibold uppercase tracking-wider">
-                  {report.classification}
-                </span>
-              </div>
-
-              {/* Date */}
-              <p className="text-[11px] text-on-surface-variant">
-                {formatDateThShort(report.created_at)}
-              </p>
-            </Link>
+              id={report.id}
+              title={report.title}
+              report_type={report.report_type}
+              status={report.status}
+              severity={report.severity}
+              classification={report.classification}
+              created_at={report.created_at}
+            />
           ))}
         </div>
       )}
