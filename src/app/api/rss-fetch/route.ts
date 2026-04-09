@@ -27,6 +27,35 @@ const AD_PATTERNS = [
   /\bjoin\s+(our|the)\s+newsletter\b/i,
   /\bpress\s+release\b/i,
   /\bpartner\s+content\b/i,
+  // Event promotions / conferences
+  /\bregister\s+(now|today|here|for)\b/i,
+  /\bearly\s*bird\s*(pricing|discount|rate|registration)?\b/i,
+  /\bsave\s+(your|a)\s+spot\b/i,
+  /\bbooth\s*#?\d/i,
+  /\bexhibitor\b/i,
+  /\bcall\s+for\s+(papers|speakers|submissions)\b/i,
+  /\buse\s+code\b/i,
+  /\b\d+%\s+off\b/i,
+  // Product / vendor promos
+  /\brequest\s+a?\s*demo\b/i,
+  /\bget\s+started\s+(for\s+)?free\b/i,
+  /\bschedule\s+a\s+(call|meeting|demo)\b/i,
+  /\bbook\s+a\s+(call|meeting|demo|consultation)\b/i,
+  /\btry\s+(it\s+)?free\b/i,
+  /\bstart\s+your\s+free\b/i,
+  /\bno\s+credit\s+card\s+required\b/i,
+];
+
+// Known event/conference names that are typically promotional when standalone
+const EVENT_TITLE_PATTERNS = [
+  /^black\s*hat\b/i,
+  /^def\s*con\b/i,
+  /^rsa\s+conference\b/i,
+  /^infosec\s*(world|europe|usa)\b/i,
+  /^gartner\s+(security|it)\b/i,
+  /^s4\s+(events?|conference)\b/i,
+  /^cyber\s*(week|summit|expo)\b/i,
+  /^hack\s*in\s*the\s*box\b/i,
 ];
 
 const CYBERSEC_KEYWORDS = [
@@ -40,13 +69,22 @@ const CYBERSEC_KEYWORDS = [
 
 function isAdContent(title: string, content: string): boolean {
   const combined = `${title} ${content}`;
+  const titleTrimmed = title.trim();
 
-  // Check for ad patterns
+  // 1. Check if title matches known event/conference promo pattern
+  //    These are promotional when the title IS the event name (no vulnerability/attack context)
+  if (EVENT_TITLE_PATTERNS.some(p => p.test(titleTrimmed))) {
+    const lower = combined.toLowerCase();
+    const hasNewsContext = /\b(vulnerabilit|exploit|malware|breach|hack|attack|flaw|patch|cve-|ransomware|phishing|backdoor|apt\d|zero.?day)\b/i.test(lower);
+    if (!hasNewsContext) return true;
+  }
+
+  // 2. Check for ad patterns
   const adScore = AD_PATTERNS.reduce((score, pattern) => {
     return score + (pattern.test(combined) ? 1 : 0);
   }, 0);
 
-  // Check for cybersec relevance
+  // 3. Check for cybersec relevance
   const lower = combined.toLowerCase();
   const hasCybersecKeyword = CYBERSEC_KEYWORDS.some(kw => lower.includes(kw));
 
@@ -56,8 +94,11 @@ function isAdContent(title: string, content: string): boolean {
   // Reject if 3+ ad patterns even with cybersec keywords (heavy promo)
   if (adScore >= 3) return true;
 
-  // Reject very short content that looks like a teaser/ad
+  // 4. Reject very short content that looks like a teaser/ad
   if (content.length < 50 && adScore >= 1) return true;
+
+  // 5. Reject title-only articles with no meaningful content (likely ads/teasers)
+  if (titleTrimmed.length > 0 && content.trim().length < 20 && !hasCybersecKeyword) return true;
 
   return false;
 }
