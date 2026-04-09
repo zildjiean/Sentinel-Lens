@@ -8,6 +8,8 @@ interface EnterpriseReportViewerProps {
   report: EnterpriseReport & {
     merged_layout_config: LayoutConfig;
   };
+  language?: "en" | "th";
+  onLanguageChange?: (lang: "en" | "th") => void;
 }
 
 const classificationColors: Record<string, string> = {
@@ -29,8 +31,10 @@ const severityColors: Record<string, string> = {
   info: "bg-gray-500/20 text-gray-500",
 };
 
-export function EnterpriseReportViewer({ report }: EnterpriseReportViewerProps) {
-  const [language, setLanguage] = useState<"en" | "th">("en");
+export function EnterpriseReportViewer({ report, language: controlledLang, onLanguageChange }: EnterpriseReportViewerProps) {
+  const [internalLang, setInternalLang] = useState<"en" | "th">("en");
+  const language = controlledLang ?? internalLang;
+  const setLanguage = onLanguageChange ?? setInternalLang;
   const layout = report.merged_layout_config;
   const content: ReportContentEN | null = language === "th" ? report.content_th : report.content_en;
 

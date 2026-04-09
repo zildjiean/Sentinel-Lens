@@ -4,8 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { mergeLayoutConfig } from "@/lib/enterprise-report/merge-layout";
-import { EnterpriseReportViewer } from "@/components/enterprise-report/EnterpriseReportViewer";
-import { ReportExporter } from "@/components/enterprise-report/ReportExporter";
+import { EnterpriseReportPageClient } from "@/components/enterprise-report/EnterpriseReportPageClient";
 import type { EnterpriseReport, LayoutConfig, EnterpriseReportLayout } from "@/lib/types/enterprise";
 
 interface PageProps {
@@ -61,32 +60,24 @@ export default async function EnterpriseReportDetailPage({ params }: PageProps) 
   if (!data) notFound();
 
   const { report, merged_layout_config } = data;
-  const reportWithLayout = { ...report, merged_layout_config };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Back link */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <Link
-          href="/enterprise-report"
-          className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-on-surface transition-colors"
-        >
-          <ArrowLeft size={16} />
-          All Reports
-        </Link>
+      <Link
+        href="/enterprise-report"
+        className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+      >
+        <ArrowLeft size={16} />
+        All Reports
+      </Link>
 
-        <ReportExporter
-          reportId={id}
-          report={report}
-          mergedLayout={merged_layout_config}
-          language="en"
-        />
-      </div>
-
-      {/* Viewer */}
-      <div className="bg-surface-container-low rounded-xl p-6 sm:p-8">
-        <EnterpriseReportViewer report={reportWithLayout} />
-      </div>
+      {/* Client wrapper: shares language state between Viewer and Exporter */}
+      <EnterpriseReportPageClient
+        reportId={id}
+        report={report}
+        mergedLayout={merged_layout_config}
+      />
     </div>
   );
 }
