@@ -5,7 +5,10 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { th } from "date-fns/locale";
 import { formatDateTimeTh } from "@/lib/utils/date";
-import { Flame, Coffee, AlertTriangle, RefreshCw } from "lucide-react";
+import { Flame, ShieldCheck, AlertTriangle, RefreshCw, Sparkles } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import type { ArticleSeverity } from "@/lib/types/database";
 
 interface HighlightArticle {
   id: string;
@@ -33,10 +36,10 @@ interface DailyHighlightsResponse {
   error?: string;
 }
 
-const IMPACT_STYLES: Record<string, { border: string; badge: string; badgeBg: string }> = {
-  critical: { border: "border-l-red-500", badge: "CRITICAL", badgeBg: "bg-red-500" },
-  high: { border: "border-l-orange-500", badge: "HIGH", badgeBg: "bg-orange-500" },
-  notable: { border: "border-l-blue-500", badge: "NOTABLE", badgeBg: "bg-blue-500" },
+const IMPACT_CONFIG: Record<string, { border: string; severity: ArticleSeverity; accent: string }> = {
+  critical: { border: "border-l-error", severity: "critical", accent: "bg-error" },
+  high: { border: "border-l-tertiary", severity: "high", accent: "bg-tertiary" },
+  notable: { border: "border-l-primary", severity: "medium", accent: "bg-primary" },
 };
 
 export function DailyHighlights() {
@@ -73,17 +76,17 @@ export function DailyHighlights() {
   if (loading) {
     return (
       <section className="mb-8">
-        <div className="bg-surface-container rounded-xl p-6 animate-pulse">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-6 bg-surface-container-high rounded" />
-            <div className="h-5 w-40 bg-surface-container-high rounded" />
+        <Card variant="default" className="animate-pulse">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-5 h-5 bg-surface-container-high rounded" />
+            <div className="h-4 w-48 bg-surface-container-high rounded" />
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-surface-container-high rounded-lg" />
+              <div key={i} className="h-28 bg-surface-container-high rounded-lg" />
             ))}
           </div>
-        </div>
+        </Card>
       </section>
     );
   }
@@ -91,21 +94,21 @@ export function DailyHighlights() {
   if (error) {
     return (
       <section className="mb-8">
-        <div className="bg-surface-container rounded-xl p-6">
+        <Card variant="default">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-500" />
+              <AlertTriangle className="w-5 h-5 text-tertiary" />
               <span className="text-on-surface-variant text-sm">{error}</span>
             </div>
             <button
               onClick={fetchHighlights}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-primary hover:bg-surface-container-high rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-surface-container-high rounded-lg transition-colors duration-200"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               ลองใหม่
             </button>
           </div>
-        </div>
+        </Card>
       </section>
     );
   }
@@ -115,104 +118,116 @@ export function DailyHighlights() {
   if (!data.has_highlights) {
     return (
       <section className="mb-8">
-        <div className="bg-surface-container rounded-xl p-6">
-          <div className="text-center py-4">
-            <div className="flex items-center justify-center gap-2.5 mb-3">
-              <Coffee className="w-5 h-5 text-on-surface-variant" />
-              <h2 className="text-base font-bold text-on-surface">ข่าวเด่นประจำวัน</h2>
+        <Card variant="default" className="relative overflow-hidden">
+          <div className="absolute -top-16 -right-16 w-48 h-48 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 text-center py-4">
+            <div className="flex items-center justify-center gap-2.5 mb-4">
+              <Flame className="w-5 h-5 text-tertiary" />
+              <h2 className="font-headline text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
+                Daily Highlights
+              </h2>
             </div>
             <div className="bg-surface-container-high rounded-lg p-6 max-w-md mx-auto border border-outline-variant/20">
-              <div className="text-2xl mb-2">✅</div>
+              <ShieldCheck className="w-8 h-8 text-secondary mx-auto mb-3" />
               <p className="text-on-surface-variant text-sm leading-relaxed">
                 วันนี้ไม่มีข่าวที่น่าสนใจเป็นพิเศษ
               </p>
               {data.no_highlight_reason && (
-                <p className="text-on-surface-variant/60 text-xs mt-1">
+                <p className="text-on-surface-variant/60 text-xs mt-1.5">
                   {data.no_highlight_reason}
                 </p>
               )}
             </div>
-            <p className="text-on-surface-variant/40 text-[11px] mt-3">
-              อัปเดตล่าสุด {formatDateTimeTh(data.generated_at)} · ตรวจสอบอีกครั้งใน 4 ชม.
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant/40 mt-4">
+              อัปเดตล่าสุด {formatDateTimeTh(data.generated_at)}
             </p>
           </div>
-        </div>
+        </Card>
       </section>
     );
   }
 
   return (
     <section className="mb-8">
-      <div className="bg-surface-container rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2.5">
-            <Flame className="w-5 h-5 text-orange-400" />
-            <div>
-              <h2 className="text-base font-bold text-on-surface">ข่าวเด่นประจำวัน</h2>
-              <p className="text-[11px] text-on-surface-variant/60">
-                AI คัดเลือก · อัปเดตล่าสุด {formatDateTimeTh(data.generated_at)}
-              </p>
-            </div>
-          </div>
-          <span className="text-[11px] text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant/20">
-            {data.highlights.length} รายการ
-          </span>
-        </div>
+      <Card variant="default" className="relative overflow-hidden">
+        {/* Decorative gradient orb */}
+        <div className="absolute -top-20 -right-20 w-56 h-56 bg-tertiary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-error/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="space-y-3">
-          {data.highlights.map((h) => {
-            const style = IMPACT_STYLES[h.impact_level] || IMPACT_STYLES.notable;
-            const article = h.article;
-            if (!article) return null;
-
-            return (
-              <div
-                key={h.article_id}
-                className={`bg-surface-container-high rounded-lg border border-outline-variant/20 border-l-4 ${style.border} p-4`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`${style.badgeBg} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide`}
-                  >
-                    {style.badge}
-                  </span>
-                  <span className="text-[11px] text-on-surface-variant/60">
-                    {formatDistanceToNow(new Date(article.published_at), {
-                      addSuffix: true,
-                      locale: th,
-                    })}
-                  </span>
-                </div>
-
-                <Link
-                  href={`/article/${article.id}`}
-                  className="text-sm font-semibold text-on-surface hover:text-primary transition-colors leading-snug block mb-2"
-                >
-                  {article.title}
-                </Link>
-
-                <div className="text-xs text-on-surface-variant leading-relaxed mb-2.5 px-3 py-2 bg-surface-container rounded-md border-l-[3px] border-yellow-500/60">
-                  <span className="text-yellow-500 font-semibold">AI: </span>
-                  {h.reason_th}
-                </div>
-
-                {article.tags && article.tags.length > 0 && (
-                  <div className="flex gap-1.5 flex-wrap">
-                    {article.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[10px] text-on-surface-variant/70 bg-surface-container px-2 py-0.5 rounded"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Flame className="w-5 h-5 text-tertiary" />
+              <div>
+                <h2 className="font-headline text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
+                  Daily Highlights
+                </h2>
+                <p className="text-[10px] text-on-surface-variant/60 mt-0.5">
+                  AI คัดเลือก · อัปเดตล่าสุด {formatDateTimeTh(data.generated_at)}
+                </p>
               </div>
-            );
-          })}
+            </div>
+            <span className="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full border border-outline-variant/20">
+              {data.highlights.length} รายการ
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {data.highlights.map((h) => {
+              const config = IMPACT_CONFIG[h.impact_level] || IMPACT_CONFIG.notable;
+              const article = h.article;
+              if (!article) return null;
+
+              return (
+                <div
+                  key={h.article_id}
+                  className={`bg-surface-container-high rounded-lg border border-outline-variant/20 border-l-4 ${config.border} p-4 hover:bg-surface-container-highest/50 transition-colors duration-200`}
+                >
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <Badge severity={config.severity} />
+                    <span className="text-[10px] text-on-surface-variant/60">
+                      {formatDistanceToNow(new Date(article.published_at), {
+                        addSuffix: true,
+                        locale: th,
+                      })}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/article/${article.id}`}
+                    className={`font-headline text-sm font-bold leading-snug block mb-2 hover:text-primary transition-colors duration-200 ${
+                      article.severity === "critical" ? "text-error" : "text-on-surface"
+                    }`}
+                  >
+                    {article.title}
+                  </Link>
+
+                  <div className="text-xs text-on-surface-variant leading-relaxed mb-3 px-3 py-2 bg-surface-container-low rounded-md border-l-[3px] border-primary/40">
+                    <span className="text-primary font-semibold flex items-center gap-1 mb-0.5">
+                      <Sparkles className="w-3 h-3" />
+                      AI Analysis
+                    </span>
+                    <span className="leading-relaxed">{h.reason_th}</span>
+                  </div>
+
+                  {article.tags && article.tags.length > 0 && (
+                    <div className="flex gap-1.5 flex-wrap">
+                      {article.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </Card>
     </section>
   );
 }
