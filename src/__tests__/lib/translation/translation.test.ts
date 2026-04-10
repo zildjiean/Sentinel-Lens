@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { DEFAULT_TRANSLATION_PROMPT } from "@/lib/translation/prompt";
 import { parseTranslationResponse } from "@/lib/translation/translator";
 
