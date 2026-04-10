@@ -122,7 +122,7 @@ async function callOpenRouter(apiKey: string, model: string, systemPrompt: strin
   return { text, tokenUsage, model, provider: "openrouter" as const };
 }
 
-function parseTranslationResponse(raw: string): { title_th: string; excerpt_th: string; content_th: string; confidence: number } {
+export function parseTranslationResponse(raw: string): { title_th: string; excerpt_th: string; content_th: string; confidence: number } {
   try {
     const jsonStr = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     const parsed = JSON.parse(jsonStr);
