@@ -253,7 +253,11 @@ export async function POST(request: Request) {
   }
 
   // Fire-and-forget: trigger auto-translation for new articles
-  if (totalNew > 0) {
+  // Skip when called from pipeline (pipeline handles translation itself)
+  const url = new URL(request.url);
+  const skipAutoTranslate = url.searchParams.get("skipAutoTranslate") === "true";
+
+  if (totalNew > 0 && !skipAutoTranslate) {
     const host = request.headers.get("host") || "localhost:3000";
     const protocol = request.headers.get("x-forwarded-proto") || "https";
     fetch(`${protocol}://${host}/api/auto-translate`, {
