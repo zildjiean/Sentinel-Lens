@@ -252,6 +252,16 @@ export async function POST(request: Request) {
     }
   }
 
+  // Fire-and-forget: trigger auto-translation for new articles
+  if (totalNew > 0) {
+    const host = request.headers.get("host") || "localhost:3000";
+    const protocol = request.headers.get("x-forwarded-proto") || "https";
+    fetch(`${protocol}://${host}/api/auto-translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).catch(() => {}); // fire-and-forget, errors are logged inside auto-translate
+  }
+
   return NextResponse.json({
     success: true,
     new_articles: totalNew,
