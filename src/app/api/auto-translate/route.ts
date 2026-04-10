@@ -6,7 +6,14 @@ import { translateArticle } from "@/lib/translation/translator";
 
 export const maxDuration = 300; // 5 minutes for Vercel serverless
 
-export async function POST() {
+export async function POST(request: Request) {
+  // Verify internal secret if configured
+  const body = await request.json().catch(() => ({}));
+  const expectedSecret = process.env.AUTO_TRANSLATE_SECRET;
+  if (expectedSecret && body.secret !== expectedSecret) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const supabase = await createClient();
 
   // Query untranslated articles (LEFT JOIN where translation is missing)

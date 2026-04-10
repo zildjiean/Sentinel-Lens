@@ -259,6 +259,7 @@ export async function POST(request: Request) {
     fetch(`${protocol}://${host}/api/auto-translate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: process.env.AUTO_TRANSLATE_SECRET || "" }),
     }).catch(() => {}); // fire-and-forget, errors are logged inside auto-translate
   }
 
