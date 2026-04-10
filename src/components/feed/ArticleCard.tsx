@@ -76,74 +76,82 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
     <Card
       variant="low"
       hoverable
-      className={`${featured ? "md:col-span-2" : ""} !p-0 overflow-hidden ${
+      className={`${featured ? "md:col-span-2" : ""} overflow-hidden ${
         article.severity === "critical"
-          ? "ring-1 ring-error/40"
+          ? "ring-1 ring-error/40 relative"
           : article.severity === "high"
-          ? "ring-1 ring-tertiary/30"
+          ? "ring-1 ring-tertiary/30 relative"
           : ""
       }`}
     >
-      {/* Hero Image / Fallback */}
-      <div className="relative aspect-video w-full overflow-hidden">
-        {article.image_url ? (
-          <Image
-            src={article.image_url}
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
-            unoptimized
-          />
-        ) : (
-          <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`}>
-            <TagIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/10" strokeWidth={1} />
-          </div>
-        )}
+      {/* Severity accent for critical/high */}
+      {article.severity === "critical" && (
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-error via-error/60 to-transparent" />
+      )}
+      {article.severity === "high" && (
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-tertiary via-tertiary/60 to-transparent" />
+      )}
 
-        {/* Severity badge overlay */}
-        <div className="absolute top-3 left-3">
-          <Badge severity={article.severity} />
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-4 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] text-on-surface-variant">{timeAgo}</span>
-          {article.translations && (
-            <span className="text-[10px] uppercase tracking-widest text-primary flex items-center gap-1">
-              <Languages className="w-3.5 h-3.5" />
-              TH
-            </span>
+      <div className="flex gap-4">
+        {/* Thumbnail */}
+        <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+          {article.image_url ? (
+            <Image
+              src={article.image_url}
+              alt=""
+              fill
+              sizes="96px"
+              className="object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <TagIcon className="w-8 h-8 text-white/15" strokeWidth={1.5} />
+            </div>
           )}
         </div>
 
-        <Link href={`/article/${article.id}`}>
-          <h3
-            className={`font-headline text-base font-bold line-clamp-2 hover:text-primary transition-colors duration-200 ${
-              article.severity === "critical" ? "text-error" : "text-on-surface"
-            }`}
-          >
-            {article.title}
-          </h3>
-        </Link>
-
-        <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-          {article.excerpt}
-        </p>
-
-        {article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {article.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant"
-              >
-                {tag}
-              </span>
-            ))}
+        {/* Content */}
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <Badge severity={article.severity} />
+            <span className="text-[10px] text-on-surface-variant flex-shrink-0">{timeAgo}</span>
           </div>
+
+          <Link href={`/article/${article.id}`}>
+            <h3
+              className={`font-headline text-sm font-bold line-clamp-2 hover:text-primary transition-colors duration-200 leading-snug ${
+                article.severity === "critical" ? "text-error" : "text-on-surface"
+              }`}
+            >
+              {article.title}
+            </h3>
+          </Link>
+
+          <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
+            {article.excerpt}
+          </p>
+        </div>
+      </div>
+
+      {/* Footer: tags + translation */}
+      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/10">
+        <div className="flex flex-wrap gap-1.5">
+          {article.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {article.translations && (
+          <span className="text-[10px] uppercase tracking-widest text-primary flex items-center gap-1">
+            <Languages className="w-3.5 h-3.5" />
+            TH
+          </span>
         )}
       </div>
     </Card>
